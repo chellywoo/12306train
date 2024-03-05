@@ -5,6 +5,7 @@
     <modules>
         <module>member</module>
         <module>common</module>
+        <module>gateway</module>
     </modules>
     <groupId>com.lxq</groupId>
     <artifactId>train</artifactId>
