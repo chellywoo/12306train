@@ -1,0 +1,12 @@
+GET http://localhost:8000/member/member/count
+Accept: application/json
+
+###
+
+GET http://localhost:8000/member/member/insert
+Accept: application/json
+
+###
+
+GET http://localhost:8000/member/member/delete
+Accept: application/json

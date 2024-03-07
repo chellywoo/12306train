@@ -9,3 +9,5 @@ create table member (
 insert into member values(1,'18735874098');
 
 select count(*) from member;
+
+delete from member where id =2;

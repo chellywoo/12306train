@@ -15,4 +15,13 @@ public class MemberController {
     public int count(){
         return memberService.count();
     }
+    @RequestMapping("/insert")
+    public int insert(){
+        return memberService.insert();
+    }
+
+    @RequestMapping("/delete")
+    public int delete(){
+        return memberService.delete();
+    }
 }
