@@ -4,6 +4,7 @@ import com.lxq.train.common.resp.CommonResp;
 import com.lxq.train.member.req.MemberRegisterReq;
 import com.lxq.train.member.service.MemberService;
 import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +32,7 @@ public class MemberController {
     }
 
     @PostMapping("/register")
-    public CommonResp register(MemberRegisterReq req){
+    public CommonResp register(@Valid MemberRegisterReq req){
         Long l = memberService.register(req);
         return new CommonResp<>("注册成功",l);
     }
