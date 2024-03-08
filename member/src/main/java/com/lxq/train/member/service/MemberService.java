@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import com.lxq.train.member.domain.Member;
 import com.lxq.train.member.domain.MemberExample;
 import com.lxq.train.member.mapper.MemberMapper;
+import com.lxq.train.member.req.MemberRegisterReq;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +30,8 @@ public class MemberService {
         return memberMapper.deleteByPrimaryKey(2L);
     }
 
-    public Long register(String mobile){
+    public Long register( MemberRegisterReq memberRegisterReq){
+        String mobile = memberRegisterReq.getMobile();
         //判断是否重复
         MemberExample memberExample = new MemberExample();
         memberExample.createCriteria().andMobileEqualTo(mobile);

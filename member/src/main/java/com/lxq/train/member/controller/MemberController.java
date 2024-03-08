@@ -1,5 +1,7 @@
 package com.lxq.train.member.controller;
 
+import com.lxq.train.common.resp.CommonResp;
+import com.lxq.train.member.req.MemberRegisterReq;
 import com.lxq.train.member.service.MemberService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,8 +16,9 @@ public class MemberController {
     private MemberService memberService;
 
     @GetMapping("/count")
-    public int count(){
-        return memberService.count();
+    public CommonResp<Integer> count(){
+        int count = memberService.count();
+        return new CommonResp<Integer>(count);
     }
     @GetMapping("/insert")
     public int insert(){
@@ -28,7 +31,8 @@ public class MemberController {
     }
 
     @PostMapping("/register")
-    public Long register(String mobile){
-        return memberService.register(mobile);
+    public CommonResp register(MemberRegisterReq req){
+        Long l = memberService.register(req);
+        return new CommonResp<>("注册成功",l);
     }
 }
