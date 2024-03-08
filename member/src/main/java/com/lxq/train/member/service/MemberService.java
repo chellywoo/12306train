@@ -1,6 +1,8 @@
 package com.lxq.train.member.service;
 
 import cn.hutool.core.collection.CollUtil;
+import com.lxq.train.common.exception.BusinessException;
+import com.lxq.train.common.exception.BusinessExceptionEnum;
 import com.lxq.train.member.domain.Member;
 import com.lxq.train.member.domain.MemberExample;
 import com.lxq.train.member.mapper.MemberMapper;
@@ -36,9 +38,11 @@ public class MemberService {
         MemberExample memberExample = new MemberExample();
         memberExample.createCriteria().andMobileEqualTo(mobile);
         List<Member> list = memberMapper.selectByExample(memberExample);
-        if(CollUtil.isNotEmpty(list))
+        if(CollUtil.isNotEmpty(list)){
+            throw new BusinessException(BusinessExceptionEnum.MOBILE_ALREADY_EXIST);
+        }
 //            return list.get(0).getId();
-            throw new RuntimeException("手机号已被注册！");
+//            throw new RuntimeException("手机号已被注册！");
         Member member = new Member();
         member.setId(System.currentTimeMillis());
         member.setMobile(mobile);
