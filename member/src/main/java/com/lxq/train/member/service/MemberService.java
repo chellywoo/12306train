@@ -1,7 +1,7 @@
 package com.lxq.train.member.service;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.lxq.train.common.exception.BusinessException;
 import com.lxq.train.common.exception.BusinessExceptionEnum;
 import com.lxq.train.common.util.SnowUtil;
@@ -9,8 +9,10 @@ import com.lxq.train.member.config.MemberApplication;
 import com.lxq.train.member.domain.Member;
 import com.lxq.train.member.domain.MemberExample;
 import com.lxq.train.member.mapper.MemberMapper;
+import com.lxq.train.member.req.MemberLoginReq;
 import com.lxq.train.member.req.MemberRegisterReq;
 import com.lxq.train.member.req.MemberSendCodeReq;
+import com.lxq.train.member.resp.MemberLoginResp;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,10 +44,10 @@ public class MemberService {
     public Long register( MemberRegisterReq memberRegisterReq){
         String mobile = memberRegisterReq.getMobile();
         //判断是否重复
-        MemberExample memberExample = new MemberExample();
-        memberExample.createCriteria().andMobileEqualTo(mobile);
-        List<Member> list = memberMapper.selectByExample(memberExample);
-        if(CollUtil.isNotEmpty(list)){
+        Member mem = selectBYMobile(mobile);
+
+        // 如果表中已经存在，返回手机号已注册
+        if(ObjectUtil.isNotNull(mem)){
             throw new BusinessException(BusinessExceptionEnum.MOBILE_ALREADY_EXIST);
         }
 //            return list.get(0).getId();
@@ -61,12 +63,10 @@ public class MemberService {
     public void sendCode(MemberSendCodeReq req){
         String mobile = req.getMobile();
         //判断是否重复
-        MemberExample memberExample = new MemberExample();
-        memberExample.createCriteria().andMobileEqualTo(mobile);
-        List<Member> list = memberMapper.selectByExample(memberExample);
+        Member mem = selectBYMobile(mobile);
 
         // 如果表中没有，那么将数据存到该表中
-        if(CollUtil.isEmpty(list)){
+        if(ObjectUtil.isNull(mem)){
             LOG.info("手机号正在注册中");
             Member member = new Member();
             member.setId(SnowUtil.getSnowFlakeNextId());
@@ -77,7 +77,8 @@ public class MemberService {
         }
 
         // 生成验证码
-        String code = RandomUtil.randomString(4);
+//        String code = RandomUtil.randomString(4);
+        String code = "8888";
         LOG.info("验证码为:{}", code);
 
         // 将验证码信息保存到短信记录表中，包括手机号、验证码、有效期、是否已使用、业务类型、发送时间、使用时间
@@ -86,5 +87,33 @@ public class MemberService {
         // 对接短信通道
         LOG.info("对接短信通道");
 
+    }
+
+    public MemberLoginResp login(MemberLoginReq req){
+        String mobile = req.getMobile();
+        String code = req.getCode();
+        //判断是否重复
+        Member mem = selectBYMobile(mobile);
+
+        // 如果表中没有，那么将数据存到该表中
+        if(ObjectUtil.isNull(mem)){
+            throw new BusinessException(BusinessExceptionEnum.MOBILE_NOT_EXIST);
+        }
+
+        if(!"8888".equals(code)){
+            throw new BusinessException(BusinessExceptionEnum.CODE_ERROR);
+        }
+
+        return BeanUtil.copyProperties(mem, MemberLoginResp.class);
+    }
+
+    private Member selectBYMobile(String mobile) {
+        MemberExample memberExample = new MemberExample();
+        memberExample.createCriteria().andMobileEqualTo(mobile);
+        List<Member> list = memberMapper.selectByExample(memberExample);
+        if(list.isEmpty())
+            return null;
+        else
+            return list.get(0);
     }
 }

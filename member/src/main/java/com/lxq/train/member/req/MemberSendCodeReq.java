@@ -17,7 +17,9 @@ public class MemberSendCodeReq {
     }
 
     @Override
-    public String toString(){
-        return "MemberSendCodeReq{"+"mobile='" + mobile + '\'' + '}';
+    public String toString() {
+        return "MemberSendCodeReq{" +
+                "mobile='" + mobile + '\'' +
+                '}';
     }
 }

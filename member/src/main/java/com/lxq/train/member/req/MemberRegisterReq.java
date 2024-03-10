@@ -15,7 +15,9 @@ public class MemberRegisterReq {
     }
 
     @Override
-    public String toString(){
-       return "MemberRegisterReq{"+"mobile='" + mobile + '\'' + '}';
+    public String toString() {
+        return "MemberRegisterReq{" +
+                "mobile='" + mobile + '\'' +
+                '}';
     }
 }

@@ -39,7 +39,9 @@
 </template>
 <script>
 import { defineComponent, reactive } from 'vue';
+import axios from 'axios';
 export default defineComponent({
+  name: "LoginView",
   setup() {
     const loginForm = reactive({
       mobile: '13000000000',
@@ -47,16 +49,13 @@ export default defineComponent({
       remember: true,
     });
 
-    const onFinish = values => {
-      console.log('Success:', values);
-    };
-    const onFinishFailed = errorInfo => {
-      console.log('Failed:', errorInfo);
+    const sendCode = () => {
+      axios.post("http://localhost:8000/member/member/sendCode",loginForm.mobile)
+          .then(response => { console.log(response) });
     };
     return {
       loginState: loginForm,
-      onFinish,
-      onFinishFailed,
+      sendCode,
     };
   },
 });
