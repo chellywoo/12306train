@@ -1,47 +1,52 @@
 <template>
-  <a-form
-      :model="formState"
+  <a-row class="LoginView">
+  <a-col :span="4.5" :offset="10" class="login-main">
+    <h1 style="text-align: center"><rocket-two-tone />&nbsp;12306售票系统</h1>
+
+    <a-form
+      :model="loginState"
       name="basic"
-      :label-col="{ span: 8 }"
-      :wrapper-col="{ span: 16 }"
       autocomplete="off"
-      @finish="onFinish"
-      @finishFailed="onFinishFailed"
   >
     <a-form-item
-        label="Mobile"
+        label="手机号"
         name="mobile"
         :rules="[{ required: true, message: 'Please input your phone number!' }]"
     >
-      <a-input v-model:value="formState.mobile" />
+      <a-input v-model:value="loginState.mobile" placeholder="手机号"/>
     </a-form-item>
 
     <a-form-item
-        label="Code"
+        label="验证码"
         name="code"
         :rules="[{ required: true, message: 'Please input verification code!' }]"
     >
-      <a-input-password v-model:value="formState.code" />
+      <a-input v-model:value="loginState.code">
+        <template #addonAfter>
+          <a @click="sendCode">获取验证码</a>
+        </template>
+      </a-input>
+      <!--<a-input v-model:value="loginForm.code" placeholder="验证码"/>-->
+<!--      <a-input-password v-model:value="loginState.code" />-->
     </a-form-item>
 
-    <a-form-item name="remember" :wrapper-col="{ offset: 8, span: 16 }">
-      <a-checkbox v-model:checked="formState.remember">Remember me</a-checkbox>
-    </a-form-item>
-
-    <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
-      <a-button type="primary" html-type="submit">Submit</a-button>
-    </a-form-item>
+      <a-form-item>
+        <a-button type="primary" block @click="login">登录</a-button>
+      </a-form-item>
   </a-form>
+  </a-col>
+  </a-row>
 </template>
 <script>
 import { defineComponent, reactive } from 'vue';
 export default defineComponent({
   setup() {
-    const formState = reactive({
-      mobile: '',
+    const loginForm = reactive({
+      mobile: '13000000000',
       code: '',
       remember: true,
     });
+
     const onFinish = values => {
       console.log('Success:', values);
     };
@@ -49,10 +54,11 @@ export default defineComponent({
       console.log('Failed:', errorInfo);
     };
     return {
-      formState,
+      loginState: loginForm,
       onFinish,
       onFinishFailed,
     };
   },
 });
 </script>
+
