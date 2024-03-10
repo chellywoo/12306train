@@ -19,7 +19,7 @@
   </a-layout>
 </template>
 <script>
-import { defineComponent, ref } from 'vue';
+import { defineComponent} from 'vue';
 import HeaderView from "@/components/Header.vue";
 import SiderView from "@/components/Sider.vue";
 export default defineComponent({
@@ -29,7 +29,6 @@ export default defineComponent({
   },
   setup() {
     return {
-      collapsed: ref(false),
     };
   },
 });
