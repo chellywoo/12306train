@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.lxq.train.common.exception.BusinessException;
 import com.lxq.train.common.exception.BusinessExceptionEnum;
+import com.lxq.train.common.util.JwtUtil;
 import com.lxq.train.common.util.SnowUtil;
 import com.lxq.train.member.config.MemberApplication;
 import com.lxq.train.member.domain.Member;
@@ -104,7 +105,10 @@ public class MemberService {
             throw new BusinessException(BusinessExceptionEnum.CODE_ERROR);
         }
 
-        return BeanUtil.copyProperties(mem, MemberLoginResp.class);
+        MemberLoginResp memberLoginResp = BeanUtil.copyProperties(mem, MemberLoginResp.class);
+        String token = JwtUtil.createToken(memberLoginResp.getId(), memberLoginResp.getMobile());
+        memberLoginResp.setToken(token);
+        return memberLoginResp;
     }
 
     private Member selectBYMobile(String mobile) {

@@ -49,7 +49,7 @@ Content-Type: application/json
 
 {
   "mobile" : "13720239041",
-  "code" : "1234"
+  "code" : "8888"
 }
 
 ###
@@ -58,6 +58,18 @@ POST http://localhost:8000/member/member/login
 Content-Type: application/json
 
 {
-"mobile" : "13720239041",
-"code" : "8888"
+  "mobile" : "18735874098",
+  "code" : "8888"
 }
+
+###
+
+POST http://localhost:8000/member/member/login
+Content-Type: application/json
+
+{
+  "mobile" : "13720239041",
+  "code" : "8888"
+}
+
+###
