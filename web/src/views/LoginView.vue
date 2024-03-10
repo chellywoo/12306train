@@ -2,7 +2,6 @@
   <a-row class="LoginView">
   <a-col :span="4.5" :offset="9" class="login-main">
     <h1 style="text-align: center"><rocket-two-tone />&nbsp;12306售票系统</h1>
-
     <a-form
       :model="loginForm"
       name="basic"
@@ -42,6 +41,7 @@ import { defineComponent, reactive } from 'vue';
 import axios from 'axios';
 import { notification } from 'ant-design-vue';
 import {useRouter} from 'vue-router'
+import store from "@/store";
 export default defineComponent({
   name: "LoginView",
   setup() {
@@ -74,6 +74,7 @@ export default defineComponent({
               notification.success({description: "登录成功"});
               // 登录成功后，跳转到控台界面
               router.push("/");
+              store.commit("setMember", data.content);
             }else{
               notification.error({description: data.message});
             }
