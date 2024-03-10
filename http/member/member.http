@@ -22,4 +22,11 @@ mobile=13720239041
 POST http://localhost:8000/member/member/register
 Content-Type: application/x-www-form-urlencoded
 
-mobile=13935846383
+mobile=13935846384
+
+###
+
+POST http://localhost:8000/member/member/sendCode
+Content-Type: application/x-www-form-urlencoded
+
+mobile=13720239041

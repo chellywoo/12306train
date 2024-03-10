@@ -2,6 +2,7 @@ package com.lxq.train.member.controller;
 
 import com.lxq.train.common.resp.CommonResp;
 import com.lxq.train.member.req.MemberRegisterReq;
+import com.lxq.train.member.req.MemberSendCodeReq;
 import com.lxq.train.member.service.MemberService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
@@ -35,5 +36,11 @@ public class MemberController {
     public CommonResp register(@Valid MemberRegisterReq req){
         Long l = memberService.register(req);
         return new CommonResp<>("注册成功",l);
+    }
+
+    @PostMapping("/sendCode")
+    public CommonResp sendCode(@Valid MemberSendCodeReq req){
+        memberService.sendCode(req);
+        return new CommonResp<>();
     }
 }
