@@ -4,7 +4,7 @@
     <h1 style="text-align: center"><rocket-two-tone />&nbsp;12306售票系统</h1>
 
     <a-form
-      :model="loginState"
+      :model="loginForm"
       name="basic"
       autocomplete="off"
   >
@@ -13,7 +13,7 @@
         name="mobile"
         :rules="[{ required: true, message: 'Please input your phone number!' }]"
     >
-      <a-input v-model:value="loginState.mobile" placeholder="手机号"/>
+      <a-input v-model:value="loginForm.mobile" placeholder="手机号"/>
     </a-form-item>
 
     <a-form-item
@@ -21,7 +21,7 @@
         name="code"
         :rules="[{ required: true, message: 'Please input verification code!' }]"
     >
-      <a-input v-model:value="loginState.code">
+      <a-input v-model:value="loginForm.code">
         <template #addonAfter>
           <a @click="sendCode">获取验证码</a>
         </template>
@@ -50,11 +50,11 @@ export default defineComponent({
     });
 
     const sendCode = () => {
-      axios.post("http://localhost:8000/member/member/sendCode",loginForm.mobile)
+      axios.post("http://localhost:8000/member/member/sendCode", {"mobile" : loginForm.mobile})
           .then(response => { console.log(response) });
     };
     return {
-      loginState: loginForm,
+      loginForm,
       sendCode,
     };
   },
