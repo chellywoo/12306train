@@ -1,6 +1,6 @@
 <template>
   <a-row class="LoginView">
-  <a-col :span="4.5" :offset="10" class="login-main">
+  <a-col :span="4.5" :offset="9" class="login-main">
     <h1 style="text-align: center"><rocket-two-tone />&nbsp;12306售票系统</h1>
 
     <a-form
@@ -62,3 +62,16 @@ export default defineComponent({
 });
 </script>
 
+<style>
+.login-main h1 {
+  font-size: 25px;
+  font-weight: bold;
+}
+.login-main {
+  margin-top: 60px;
+  padding: 40px 40px 20px;
+  border: 2px solid black;
+  border-radius: 10px;
+  background-color: #fcfcfc;
+}
+</style>
