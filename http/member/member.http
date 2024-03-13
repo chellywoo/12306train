@@ -1,5 +1,7 @@
 GET http://localhost:8000/member/member/count
 Accept: application/json
+token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYmYiOjE3MTAwNjM0NzgsIm1vYmlsZSI6IjEyMyIsImlkIjoxLCJleHAiOjE3MTAwNjM0ODEsImlhdCI6MTcxMDA2MzQ3OH0.0ldxyvfpChZOBFHgZZguiAX-Ftbmf-QsrBTSImlIz6s
+
 
 ###
 
