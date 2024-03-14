@@ -1,6 +1,7 @@
 <template>
 <!--  <h1>乘客界面</h1>-->
-  <a-button type="primary" @click="showModal">新增乘客</a-button>
+  <p> <a-button type="primary" @click="showModal">新增乘客</a-button></p>
+  <a-table :dataSource="passengers" :columns="columns" />
   <a-modal v-model:visible="visible" title="乘客" @ok="handleOk"
            ok-text="确认" cancel-text="取消">
     <a-form
@@ -35,7 +36,7 @@
   </a-modal>
 </template>
 <script>
-import {defineComponent, ref} from "vue";
+import {defineComponent, onMounted, ref} from "vue";
 import axios from "axios";
 import {notification} from "ant-design-vue";
 
@@ -64,9 +65,52 @@ export default defineComponent({
           notification.error({description: data.message});
         }
       })
-
     };
+    const passengers= ref([]);
+    const columns= [
+      {
+        title: '姓名',
+        dataIndex: 'name',
+        key: 'name',
+      },
+      {
+        title: '身份证',
+        dataIndex: 'idCard',
+        key: 'idCard',
+      },
+      {
+        title: '乘客类型',
+        dataIndex: 'type',
+        key: 'type',
+      },
+    ];
+
+    const handleQuery = (param) => {
+      axios.get("/member/passenger/queryList", {
+            params: {
+              page: param.page,
+              size: param.size
+            }
+          }
+      ).then((response) => {
+        let data = response.data;
+        console.log();
+        if (data.success) {
+          passengers.value = data.content.list;
+        } else {
+          notification.error({description: data.message});
+        }
+      })
+    }
+    onMounted(() => {
+      handleQuery({
+        page: 1,
+        size: 2
+      });
+    });
     return {
+      passengers,
+      columns,
       visible,
       showModal,
       handleOk,
