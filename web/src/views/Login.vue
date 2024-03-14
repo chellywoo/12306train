@@ -1,5 +1,5 @@
 <template>
-  <a-row class="LoginView">
+  <a-row class="Login">
   <a-col :span="4.5" :offset="9" class="login-main">
     <h1 style="text-align: center"><rocket-two-tone />&nbsp;12306售票系统</h1>
     <a-form
@@ -43,7 +43,7 @@ import { notification } from 'ant-design-vue';
 import {useRouter} from 'vue-router'
 import store from "@/store";
 export default defineComponent({
-  name: "LoginView",
+  name: "Login",
   setup() {
     const router = useRouter();
     const loginForm = reactive({

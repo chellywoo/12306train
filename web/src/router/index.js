@@ -6,16 +6,28 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    component: () => import(/* webpackChunkName: "about" */ '../views/LoginView.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/Login.vue')
   },
 
   {
     path: '/',
     name: 'window',
-    component: () => import(/* webpackChunkName: "about" */ '../views/WindowView.vue'),
-    meta:{
+    component: () => import(/* webpackChunkName: "about" */ '../views/Window.vue'),
+    meta: {
       loginRequire: true
-    }
+    },
+    children: [{
+      path: 'welcome',
+      name: 'welcome',
+      component: () => import(/* webpackChunkName: "about" */ '../views/main/welcome.vue'),
+    }, {
+      path: 'passenger',
+      name: 'passenger',
+      component: () => import(/* webpackChunkName: "about" */ '../views/main/passenger.vue'),
+    }]
+  },{
+    path: '',
+    redirect: '/welcome'
   }
 ]
 
