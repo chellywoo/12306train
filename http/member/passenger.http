@@ -46,3 +46,9 @@ token: {{token}}
   "idCard": "1231231231321313",
   "type": "3"
 }
+
+###
+
+GET http://localhost:8000/member/passenger/queryList
+Accept: application/json
+token: {{token}}
