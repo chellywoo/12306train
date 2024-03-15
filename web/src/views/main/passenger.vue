@@ -20,24 +20,15 @@
         :model="passenger"
         :label-col="{ span: 4 }"
         :wrapper-col="{ span: 20 }">
-      <a-form-item
-          label="姓名"
-          :rules="[{ required: true, message: '请输入姓名!' }]"
-      >
-        <a-input v-model:value="passenger.name" />
+      <a-form-item label="姓名">
+        <a-input v-model:value="passenger.name"/>
       </a-form-item>
 
-      <a-form-item
-          label="身份证号"
-          :rules="[{ required: true, message: '请输入身份证号!' }]"
-      >
-        <a-input v-model:value="passenger.idCard" />
+      <a-form-item label="身份证号">
+        <a-input v-model:value="passenger.idCard"/>
       </a-form-item>
 
-      <a-form-item
-          label="乘客类型"
-          :rules="[{ required: true, message: '请选择乘客类型!' }]"
-      >
+      <a-form-item label="乘客类型">
         <a-select v-model:value="passenger.type">
           <a-select-option value="1">成人</a-select-option>
           <a-select-option value="2">儿童</a-select-option>
@@ -100,6 +91,7 @@ export default defineComponent({
         if(data.success){
           notification.success({description: "添加成功!"});
           visible.value = false;
+          passenger.value="";
           handleQuery({
             page: pagination.current,
             size: pagination.pageSize
