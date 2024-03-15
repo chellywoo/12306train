@@ -1,7 +1,18 @@
 <template>
 <!--  <h1>乘客界面</h1>-->
-  <p> <a-button type="primary" @click="showModal">新增乘客</a-button></p>
-  <a-table :dataSource="passengers" :columns="columns" :pagination="pagination" />
+  <p>
+    <a-space style="width: 100%">
+    <a-button type="primary" @click="showModal">
+      <user-add-outlined/>
+      新增乘客
+    </a-button>
+    <a-button type="primary" @click="handleQuery()">
+      <sync-outlined/>
+      刷新
+    </a-button>
+    </a-space>
+  </p>
+  <a-table :dataSource="passengers" :columns="columns" :pagination="pagination" @change="handleTableChange"/>
   <a-modal v-model:visible="visible" title="乘客" @ok="handleOk"
            ok-text="确认" cancel-text="取消">
     <a-form
@@ -91,6 +102,12 @@ export default defineComponent({
     })
 
     const handleQuery = (param) => {
+      if(!param){
+        param={
+          page: 1,
+          size: pagination.pageSize
+        }
+      }
       axios.get("/member/passenger/queryList", {
             params: {
               page: param.page,
@@ -101,12 +118,22 @@ export default defineComponent({
         let data = response.data;
         if (data.success) {
           passengers.value = data.content.list;
+          pagination.current = param.page;//如果不加这一行，点击第二页之后，虽然列表修改了但是页码还在第一页
           pagination.total = data.content.total;
         } else {
           notification.error({description: data.message});
         }
       })
     }
+
+    const handleTableChange = (pagination) => {
+      // console.log(pagination);
+      handleQuery({
+        page: pagination.current,
+        size: pagination.pageSize
+      })
+    }
+
     onMounted(() => {
       handleQuery({
         page: 1,
@@ -121,6 +148,8 @@ export default defineComponent({
       showModal,
       handleOk,
       passenger,
+      handleTableChange,
+      handleQuery,
     };
   },
 });
