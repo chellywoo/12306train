@@ -16,20 +16,23 @@
            :loading="loading">
     <template #bodyCell="{ column,record }">
       <template v-if="column.key === 'operation'">
-        <a-button style="color: blueviolet" type = "text" @click="OnEdit(record)">
-          <edit-outlined />
+        <a-space>
+        <a style="color: blueviolet" @click="OnEdit(record)">
+          <edit-outlined/>
           编辑
-        </a-button>
-
-        <a-popconfirm
-            title="删除后不可恢复，确定删除?"
-            ok-text="确认"
-            cancel-text="取消"
-            @confirm="OnDelete(record)"
-        >
-          <delete-outlined  style="color: red"/>
+        </a>
+        <a-popconfirm title="删除后不可恢复，确定删除?" ok-text="确认" cancel-text="取消" @confirm="OnDelete(record)">
+          <delete-outlined style="color: red"/>
           <a style="color: red">删除</a>
         </a-popconfirm>
+        </a-space>
+      </template>
+      <template v-else-if="column.key === 'type'">
+        <span v-for="item in PASSENGER_TYPE_ARRAY" :key="item.key">
+          <span v-if="item.key === record.type">
+            {{ item.value }}
+          </span>
+        </span>
       </template>
     </template>
   </a-table>
@@ -50,9 +53,9 @@
 
       <a-form-item label="乘客类型">
         <a-select v-model:value="passenger.type">
-          <a-select-option value="1">成人</a-select-option>
-          <a-select-option value="2">儿童</a-select-option>
-          <a-select-option value="3">学生</a-select-option>
+          <a-select-option v-for="item in PASSENGER_TYPE_ARRAY" :key="item.key" :value="item.key">
+            {{ item.value }}
+          </a-select-option>
         </a-select>
       </a-form-item>
     </a-form>
@@ -65,6 +68,7 @@ import {notification} from "ant-design-vue";
 
 export default defineComponent({
   setup() {
+    const PASSENGER_TYPE_ARRAY = window.PASSENGER_TYPE;
     const visible = ref(false);
     let passenger = ref({
       id: undefined,
@@ -188,6 +192,7 @@ export default defineComponent({
       });
     });
     return {
+      PASSENGER_TYPE_ARRAY,
       pagination,
       passengers,
       columns,
@@ -199,7 +204,8 @@ export default defineComponent({
       handleQuery,
       loading,
       OnEdit,
-      OnDelete
+      OnDelete,
+
     };
   },
 });
