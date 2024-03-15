@@ -1,6 +1,10 @@
 package com.lxq.train.member.resp;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+
 public class MemberLoginResp {
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     private String mobile;
