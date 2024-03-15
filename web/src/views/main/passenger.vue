@@ -1,19 +1,30 @@
 <template>
-<!--  <h1>乘客界面</h1>-->
+  <!--  <h1>乘客界面</h1>-->
   <p>
     <a-space style="width: 100%">
-    <a-button type="primary" @click="showModal">
-      <user-add-outlined/>
-      新增乘客
-    </a-button>
-    <a-button type="primary" @click="handleQuery()">
-      <sync-outlined/>
-      刷新
-    </a-button>
+      <a-button type="primary" @click="showModal">
+        <user-add-outlined/>
+        新增乘客
+      </a-button>
+      <a-button type="primary" @click="handleQuery()">
+        <sync-outlined/>
+        刷新
+      </a-button>
     </a-space>
   </p>
   <a-table :dataSource="passengers" :columns="columns" :pagination="pagination" @change="handleTableChange"
-           :loading="loading"/>
+           :loading="loading">
+    <template #bodyCell="{ column,record }">
+      <template v-if="column.key === 'operation'">
+        <a-button type = "text" @click="OnEdit(record)">
+          <edit-outlined />
+          编辑
+        </a-button>
+
+      </template>
+    </template>
+  </a-table>
+
   <a-modal v-model:visible="visible" title="乘客" @ok="handleOk"
            ok-text="确认" cancel-text="取消">
     <a-form
@@ -39,7 +50,7 @@
   </a-modal>
 </template>
 <script>
-import {defineComponent, onMounted, reactive, ref} from "vue";
+import {defineComponent, onMounted, ref} from "vue";
 import axios from "axios";
 import {notification} from "ant-design-vue";
 
@@ -56,8 +67,8 @@ export default defineComponent({
       updateTime: undefined,
     });
 
-    const passengers= ref([]);
-    const columns= [
+    const passengers = ref([]);
+    const columns = [
       {
         title: '姓名',
         dataIndex: 'name',
@@ -72,44 +83,52 @@ export default defineComponent({
         title: '乘客类型',
         dataIndex: 'type',
         key: 'type',
-      },
+      }, {
+        title: "操作",
+        dataIndex: 'operation',
+        key: 'operation'
+      }
     ];
-    const pagination = reactive({
+    const pagination = ref({
       total: 0,
       current: 1,
       pageSize: 6,
     })
 
-    let loading=ref(false);
+    let loading = ref(false);
 
-    const showModal = () => {
+    const OnAdd = () => {
       visible.value = true;
     };
+
+    const OnEdit = (record) => {
+      passenger.value = record;
+      visible.value = true;
+    }
     const handleOk = () => {
       axios.post("/member/passenger/save", passenger.value).then((response) => {
         let data = response.data;
-        if(data.success){
+        if (data.success) {
           notification.success({description: "添加成功!"});
           visible.value = false;
-          passenger.value="";
           handleQuery({
-            page: pagination.current,
-            size: pagination.pageSize
+            page: pagination.value.current,
+            size: pagination.value.pageSize
           })
-        }else{
+        } else {
           notification.error({description: data.message});
         }
       })
     };
 
     const handleQuery = (param) => {
-      if(!param){
-        param={
+      if (!param) {
+        param = {
           page: 1,
-          size: pagination.pageSize
+          size: pagination.value.pageSize
         }
       }
-      loading.value=true;
+      loading.value = true;
       axios.get("/member/passenger/queryList", {
             params: {
               page: param.page,
@@ -119,10 +138,10 @@ export default defineComponent({
       ).then((response) => {
         let data = response.data;
         if (data.success) {
-          loading.value=false;
+          loading.value = false;
           passengers.value = data.content.list;
-          pagination.current = param.page;//如果不加这一行，点击第二页之后，虽然列表修改了但是页码还在第一页
-          pagination.total = data.content.total;
+          pagination.value.current = param.page;//如果不加这一行，点击第二页之后，虽然列表修改了但是页码还在第一页
+          pagination.value.total = data.content.total;
         } else {
           notification.error({description: data.message});
         }
@@ -132,15 +151,15 @@ export default defineComponent({
     const handleTableChange = (pagination) => {
       // console.log(pagination);
       handleQuery({
-        page: pagination.current,
-        size: pagination.pageSize
+        page: pagination.value.current,
+        size: pagination.value.pageSize
       })
     }
 
     onMounted(() => {
       handleQuery({
         page: 1,
-        size: pagination.pageSize
+        size: pagination.value.pageSize
       });
     });
     return {
@@ -148,12 +167,13 @@ export default defineComponent({
       passengers,
       columns,
       visible,
-      showModal,
+      showModal: OnAdd,
       handleOk,
       passenger,
       handleTableChange,
       handleQuery,
       loading,
+      OnEdit,
     };
   },
 });
