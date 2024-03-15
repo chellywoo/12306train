@@ -16,11 +16,20 @@
            :loading="loading">
     <template #bodyCell="{ column,record }">
       <template v-if="column.key === 'operation'">
-        <a-button type = "text" @click="OnEdit(record)">
+        <a-button style="color: blueviolet" type = "text" @click="OnEdit(record)">
           <edit-outlined />
           编辑
         </a-button>
 
+        <a-popconfirm
+            title="删除后不可恢复，确定删除?"
+            ok-text="确认"
+            cancel-text="取消"
+            @confirm="OnDelete(record)"
+        >
+          <delete-outlined  style="color: red"/>
+          <a style="color: red">删除</a>
+        </a-popconfirm>
       </template>
     </template>
   </a-table>
@@ -106,6 +115,21 @@ export default defineComponent({
       passenger.value = window.Tool.copy(record);
       visible.value = true;
     }
+
+    const OnDelete = (record) => {
+      axios.delete("/member/passenger/delete/" + record.id).then((response) => {
+        let data = response.data;
+        if (data.success) {
+          notification.success({description: "删除成功!"});
+          handleQuery({
+            page: pagination.value.current,
+            size: pagination.value.pageSize
+          })
+        } else {
+          notification.error({description: data.message});
+        }
+      })
+    }
     const handleOk = () => {
       axios.post("/member/passenger/save", passenger.value).then((response) => {
         let data = response.data;
@@ -175,6 +199,7 @@ export default defineComponent({
       handleQuery,
       loading,
       OnEdit,
+      OnDelete
     };
   },
 });
