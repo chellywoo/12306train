@@ -1,5 +1,6 @@
 package com.lxq.train.generator.server;
 
+import com.lxq.train.generator.util.FreemarkerUtil;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
@@ -9,16 +10,21 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TestServer {
-    static String toPath = "generator/src/main/java/com/lxq/train/generator/test/";
+public class ServerGenerator {
+    static String servicePath = "[module]/src/main/java/com/lxq/train/[module]/service/";
     static String pomPath = "generator/pom.xml";
     static{
-        new File(toPath).mkdirs();
+        new File(servicePath).mkdirs();
     }
 
     public static void main(String[] args) throws Exception {
         String generatorPath = generatorPath();
 
+        String module = generatorPath.replace("src/main/resources/generator-config-", "").replace(".xml", "");
+        System.out.println("module = " + module);
+        servicePath = servicePath.replace("[module]",module);
+        System.out.println("servicePath = " + servicePath);
+        
         Document document = new SAXReader().read("generator/"+ generatorPath);
         Node table = document.selectSingleNode("//table");
         System.out.println("table = " + table);
@@ -26,6 +32,18 @@ public class TestServer {
         System.out.println("tableName = " + tableName.getText());
         Node domainObjectName = table.selectSingleNode("@domainObjectName");
         System.out.println("domainObjectName = " + domainObjectName.getText());
+        
+        String Domain = domainObjectName.getText();
+        String domain = Domain.substring(0,1).toLowerCase() + Domain.substring(1);
+        
+        Map<String, Object> param = new HashMap<>();
+        param.put("Domain",Domain);
+        param.put("domain",domain);
+        System.out.println("param = " + param);
+
+        FreemarkerUtil.initConfig("service.ftl");
+        FreemarkerUtil.generator(servicePath + Domain +"Service.java", param);
+
     }
 
     private static String generatorPath() throws DocumentException {
