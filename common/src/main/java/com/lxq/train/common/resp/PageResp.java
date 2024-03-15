@@ -3,14 +3,14 @@ package com.lxq.train.common.resp;
 import java.util.List;
 
 public class PageResp<T> {
-    private Integer total;
+    private Long total;
     private List<T> list;
 
-    public Integer getTotal() {
+    public Long getTotal() {
         return total;
     }
 
-    public void setTotal(Integer total) {
+    public void setTotal(Long total) {
         this.total = total;
     }
 

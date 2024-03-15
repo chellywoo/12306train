@@ -1,7 +1,7 @@
 <template>
 <!--  <h1>乘客界面</h1>-->
   <p> <a-button type="primary" @click="showModal">新增乘客</a-button></p>
-  <a-table :dataSource="passengers" :columns="columns" />
+  <a-table :dataSource="passengers" :columns="columns" :pagination="pagination" />
   <a-modal v-model:visible="visible" title="乘客" @ok="handleOk"
            ok-text="确认" cancel-text="取消">
     <a-form
@@ -36,7 +36,7 @@
   </a-modal>
 </template>
 <script>
-import {defineComponent, onMounted, ref} from "vue";
+import {defineComponent, onMounted, reactive, ref} from "vue";
 import axios from "axios";
 import {notification} from "ant-design-vue";
 
@@ -84,6 +84,11 @@ export default defineComponent({
         key: 'type',
       },
     ];
+    const pagination = reactive({
+      total: 0,
+      current: 1,
+      pageSize: 2,
+    })
 
     const handleQuery = (param) => {
       axios.get("/member/passenger/queryList", {
@@ -94,9 +99,9 @@ export default defineComponent({
           }
       ).then((response) => {
         let data = response.data;
-        console.log();
         if (data.success) {
           passengers.value = data.content.list;
+          pagination.total = data.content.total;
         } else {
           notification.error({description: data.message});
         }
@@ -105,10 +110,11 @@ export default defineComponent({
     onMounted(() => {
       handleQuery({
         page: 1,
-        size: 2
+        size: pagination.pageSize
       });
     });
     return {
+      pagination,
       passengers,
       columns,
       visible,

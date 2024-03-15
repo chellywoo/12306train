@@ -51,11 +51,12 @@ public class PassengerService {
         List<Passenger> passengerList = passengerMapper.selectByExample(passengerExample);
 
         PageInfo pageInfo = new PageInfo<>(passengerList);
-        LOG.info("乘客总数为："+ pageInfo.getSize());
+        LOG.info("乘客总数为："+ pageInfo.getTotal());
         LOG.info("最大分配的页数为："+ pageInfo.getPages());
         List<PassengerQueryResp> passengerQueryResp = BeanUtil.copyToList(passengerList, PassengerQueryResp.class);
-        PageResp pageResp = new PageResp();
-        pageResp.setTotal(pageInfo.getSize());
+
+        PageResp<PassengerQueryResp> pageResp = new PageResp<>();
+        pageResp.setTotal(pageInfo.getTotal());
         pageResp.setList(passengerQueryResp);
         return pageResp;
 
