@@ -98,18 +98,19 @@ export default defineComponent({
     let loading = ref(false);
 
     const OnAdd = () => {
+      passenger.value = {};
       visible.value = true;
     };
 
     const OnEdit = (record) => {
-      passenger.value = record;
+      passenger.value = window.Tool.copy(record);
       visible.value = true;
     }
     const handleOk = () => {
       axios.post("/member/passenger/save", passenger.value).then((response) => {
         let data = response.data;
         if (data.success) {
-          notification.success({description: "添加成功!"});
+          notification.success({description: "保存成功!"});
           visible.value = false;
           handleQuery({
             page: pagination.value.current,
