@@ -60,3 +60,16 @@ Accept: application/json
 token: {{token}}
 
 ###
+
+POST http://localhost:8000/member/passenger/save
+Content-Type: application/json
+token: {{token}}
+
+{
+  "id" : 1768183915366977536,
+  "memberId":1766666339369488384,
+  "name" : "逯晓琪",
+  "idCard": "1234567890",
+  "type": "3",
+  "createTime": "2024-03-14 17:30:00"
+}

@@ -1,6 +1,7 @@
 package com.lxq.train.member.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -19,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 
 
@@ -30,13 +30,18 @@ public class PassengerService {
     @Resource
     private PassengerMapper passengerMapper;
     public void save(PassengerSaveReq passengerSaveReq){
-        Date now = new Date();
+        DateTime now = new DateTime();
         Passenger passenger = BeanUtil.copyProperties(passengerSaveReq, Passenger.class);
-        passenger.setMemberId(LoginMemberContext.getId());
-        passenger.setId(SnowUtil.getSnowFlakeNextId());
-        passenger.setCreateTime(now);
-        passenger.setUpdateTime(now);
-        passengerMapper.insert(passenger);
+        if (ObjectUtil.isNull(passenger.getId())) {
+            passenger.setMemberId(LoginMemberContext.getId());
+            passenger.setId(SnowUtil.getSnowFlakeNextId());
+            passenger.setCreateTime(now);
+            passenger.setUpdateTime(now);
+            passengerMapper.insert(passenger);
+        }else{
+            passenger.setUpdateTime(now);
+            passengerMapper.updateByPrimaryKey(passenger);
+        }
     }
 
     public PageResp<PassengerQueryResp> query(PassengerQueryReq req){
