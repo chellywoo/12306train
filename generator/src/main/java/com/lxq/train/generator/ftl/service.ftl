@@ -5,10 +5,8 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.lxq.train.common.context.LoginMemberContext;
 import com.lxq.train.common.resp.PageResp;
 import com.lxq.train.common.util.SnowUtil;
-import com.lxq.train.${module}.config.MemberApplication;
 import com.lxq.train.${module}.domain.${Domain};
 import com.lxq.train.${module}.domain.${Domain}Example;
 import com.lxq.train.${module}.mapper.${Domain}Mapper;
@@ -25,7 +23,7 @@ import java.util.List;
 
 @Service
 public class ${Domain}Service {
-    private static final Logger LOG = LoggerFactory.getLogger(MemberApplication.class);
+    private static final Logger LOG = LoggerFactory.getLogger(${Domain}Service.class);
 
     @Resource
     private ${Domain}Mapper ${domain}Mapper;
@@ -33,7 +31,6 @@ public class ${Domain}Service {
         DateTime now = new DateTime();
         ${Domain} ${domain} = BeanUtil.copyProperties(${domain}SaveReq, ${Domain}.class);
         if (ObjectUtil.isNull(${domain}.getId())) {
-            ${domain}.setMemberId(LoginMemberContext.getId());
             ${domain}.setId(SnowUtil.getSnowFlakeNextId());
             ${domain}.setCreateTime(now);
             ${domain}.setUpdateTime(now);
@@ -48,9 +45,7 @@ public class ${Domain}Service {
         ${Domain}Example ${domain}Example = new ${Domain}Example();
         ${domain}Example.setOrderByClause("id DESC");
         ${Domain}Example.Criteria ${domain}ExampleCriteria = ${domain}Example.createCriteria();
-        if(ObjectUtil.isNotNull(req.getMemberId())){
-            ${domain}ExampleCriteria.andMemberIdEqualTo(req.getMemberId());
-        }
+
         LOG.info("查询页数为："+ req.getPage());
         LOG.info("每页条数为："+ req.getSize());
         PageHelper.startPage(req.getPage(),req.getSize());
