@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.util.*;
 
 public class ServerGenerator {
+    static boolean readOnly = false;
+    static String vuePath = "web/src/views/main/";
     static String serverPath = "[module]/src/main/java/com/lxq/train/[module]/";
     static String pomPath = "generator/pom.xml";
     static{
@@ -65,13 +67,15 @@ public class ServerGenerator {
         param.put("tableNameCn",tableNameCn);
         param.put("fieldList",fieldList);
         param.put("typeSet", typeSet);
+        param.put("readOnly", readOnly);
         System.out.println("组装参数 = " + param);
 
 //        generateFile(Domain, param, "service","service");
 //        generateFile(Domain, param, "controller","controller");
-        generateFile(Domain, param, "req", "saveReq");
-        generateFile(Domain, param, "req","queryReq");
-        generateFile(Domain, param, "resp","queryResp");
+//        generateFile(Domain, param, "req", "saveReq");
+//        generateFile(Domain, param, "req","queryReq");
+//        generateFile(Domain, param, "resp","queryResp");
+        generateVue(do_main, param);
 
     }
 
@@ -81,6 +85,14 @@ public class ServerGenerator {
         new File(toPath).mkdirs();
         String Target = target.substring(0,1).toUpperCase() + target.substring(1);
         String filename = toPath + Domain + Target + ".java";
+        System.out.println("开始生成" + filename);
+        FreemarkerUtil.generator(filename, param);
+    }
+
+    private static void generateVue(String do_main, Map<String, Object> param) throws IOException, TemplateException {
+        FreemarkerUtil.initConfig("myVue.ftl");
+//        new File(vuePath).mkdirs();
+        String filename = vuePath + do_main + ".vue";
         System.out.println("开始生成" + filename);
         FreemarkerUtil.generator(filename, param);
     }
