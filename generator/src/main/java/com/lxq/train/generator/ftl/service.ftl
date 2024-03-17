@@ -1,4 +1,4 @@
-package com.lxq.train.member.service;
+package com.lxq.train.${module}.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
@@ -8,13 +8,13 @@ import com.github.pagehelper.PageInfo;
 import com.lxq.train.common.context.LoginMemberContext;
 import com.lxq.train.common.resp.PageResp;
 import com.lxq.train.common.util.SnowUtil;
-import com.lxq.train.member.config.MemberApplication;
-import com.lxq.train.member.domain.${Domain};
-import com.lxq.train.member.domain.${Domain}Example;
-import com.lxq.train.member.mapper.${Domain}Mapper;
-import com.lxq.train.member.req.${Domain}QueryReq;
-import com.lxq.train.member.req.${Domain}SaveReq;
-import com.lxq.train.member.resp.${Domain}QueryResp;
+import com.lxq.train.${module}.config.MemberApplication;
+import com.lxq.train.${module}.domain.${Domain};
+import com.lxq.train.${module}.domain.${Domain}Example;
+import com.lxq.train.${module}.mapper.${Domain}Mapper;
+import com.lxq.train.${module}.req.${Domain}QueryReq;
+import com.lxq.train.${module}.req.${Domain}SaveReq;
+import com.lxq.train.${module}.resp.${Domain}QueryResp;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

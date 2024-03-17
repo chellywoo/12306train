@@ -1,4 +1,4 @@
-package com.lxq.train.member.req;
+package com.lxq.train.${module}.req;
 
 <#list typeSet as type>
 <#if type=='Date'>

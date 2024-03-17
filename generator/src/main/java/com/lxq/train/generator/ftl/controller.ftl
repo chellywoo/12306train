@@ -1,12 +1,12 @@
-package com.lxq.train.member.controller;
+package com.lxq.train.${module}.controller;
 
 import com.lxq.train.common.context.LoginMemberContext;
 import com.lxq.train.common.resp.CommonResp;
 import com.lxq.train.common.resp.PageResp;
-import com.lxq.train.member.req.${Domain}QueryReq;
-import com.lxq.train.member.req.${Domain}SaveReq;
-import com.lxq.train.member.resp.${Domain}QueryResp;
-import com.lxq.train.member.service.${Domain}Service;
+import com.lxq.train.${module}.req.${Domain}QueryReq;
+import com.lxq.train.${module}.req.${Domain}SaveReq;
+import com.lxq.train.${module}.resp.${Domain}QueryResp;
+import com.lxq.train.${module}.service.${Domain}Service;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
