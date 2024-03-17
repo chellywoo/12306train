@@ -2,29 +2,23 @@
   <!--  <h1>乘客界面</h1>-->
   <p>
     <a-space style="width: 100%">
-      <a-button type="primary" @click="showModal">
-        <user-add-outlined/>
-        新增乘客
-      </a-button>
-      <a-button type="primary" @click="handleQuery()">
-        <sync-outlined/>
-        刷新
-      </a-button>
+      <a-button type="primary" @click="OnAdd"><user-add-outlined/>新增乘客</a-button>
+      <a-button type="primary" @click="handleQuery()"><sync-outlined/>刷新</a-button>
     </a-space>
   </p>
-  <a-table :dataSource="passengers" :columns="columns" :pagination="pagination" @change="handleTableChange"
+  <a-table :dataSource="passengers"
+           :columns="columns"
+           :pagination="pagination"
+           @change="handleTableChange"
            :loading="loading">
     <template #bodyCell="{ column,record }">
       <template v-if="column.key === 'operation'">
         <a-space>
-        <a style="color: blueviolet" @click="OnEdit(record)">
-          <edit-outlined/>
-          编辑
-        </a>
-        <a-popconfirm title="删除后不可恢复，确定删除?" ok-text="确认" cancel-text="取消" @confirm="OnDelete(record)">
-          <delete-outlined style="color: red"/>
-          <a style="color: red">删除</a>
-        </a-popconfirm>
+          <a style="color: blueviolet" @click="OnEdit(record)"><edit-outlined/>编辑</a>
+          <a-popconfirm title="删除后不可恢复，确定删除?" ok-text="确认" cancel-text="取消" @confirm="OnDelete(record)">
+            <delete-outlined style="color: red"/>
+            <a style="color: red">删除</a>
+          </a-popconfirm>
         </a-space>
       </template>
       <template v-else-if="column.key === 'type'">
@@ -197,7 +191,7 @@ export default defineComponent({
       passengers,
       columns,
       visible,
-      showModal: OnAdd,
+      OnAdd,
       handleOk,
       passenger,
       handleTableChange,
