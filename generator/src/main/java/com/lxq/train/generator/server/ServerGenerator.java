@@ -11,9 +11,7 @@ import org.dom4j.io.SAXReader;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ServerGenerator {
     static String serverPath = "[module]/src/main/java/com/lxq/train/[module]/";
@@ -53,23 +51,30 @@ public class ServerGenerator {
 
         String Domain = domainObjectName.getText();
         String domain = Domain.substring(0,1).toLowerCase() + Domain.substring(1);
+        String do_main = tableName.getText().replaceAll("_", "-");
 
         String tableNameCn = DbUtil.getTableComment(tableName.getText());
         List<Field> fieldList = DbUtil.getColumnByTableName(tableName.getText());
+        Set<String> typeSet = getJavaTypes(fieldList);//
 
         Map<String, Object> param = new HashMap<>();
         param.put("Domain",Domain);
         param.put("domain",domain);
-        System.out.println("param = " + param);
+        param.put("do_main",do_main);
+        param.put("tableNameCn",tableNameCn);
+        param.put("fieldList",fieldList);
+        param.put("typeSet", typeSet);
+        System.out.println("组装参数 = " + param);
 
-        generateFile(Domain, param, "service");
-        generateFile(Domain, param, "controller");
+//        generateFile(Domain, param, "service","service");
+//        generateFile(Domain, param, "controller","controller");
+        generateFile(Domain, param, "req", "saveReq");
 
     }
 
-    private static void generateFile(String Domain, Map<String, Object> param, String target) throws IOException, TemplateException {
+    private static void generateFile(String Domain, Map<String, Object> param, String packageName, String target) throws IOException, TemplateException {
         FreemarkerUtil.initConfig(target + ".ftl");
-        String toPath = serverPath + target + "/";
+        String toPath = serverPath + packageName + "/";
         new File(toPath).mkdirs();
         String Target = target.substring(0,1).toUpperCase() + target.substring(1);
         String filename = toPath + Domain + Target + ".java";
@@ -86,5 +91,16 @@ public class ServerGenerator {
         Node node = document.selectSingleNode("//pom:configurationFile");
         System.out.println(node.getText());
         return node.getText();
+    }
+
+    /***
+     * 将fieldList中的得到的java类型进行去重
+     */
+    private static Set<String> getJavaTypes(List<Field> fieldList){
+        Set<String> javaType = new HashSet<>();
+        for (Field i : fieldList) {
+            javaType.add(i.getJavaType());
+        }
+        return javaType;
     }
 }

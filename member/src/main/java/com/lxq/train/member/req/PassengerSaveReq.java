@@ -6,14 +6,17 @@ import jakarta.validation.constraints.NotBlank;
 import java.util.Date;
 
 public class PassengerSaveReq {
+
     private Long id;
 
     private Long memberId;
 
     @NotBlank(message = "姓名不能为空")
     private String name;
+
     @NotBlank(message = "身份证号不能为空")
     private String idCard;
+
     @NotBlank(message = "乘客类型不能为空")
     private String type;
 
