@@ -1,13 +1,10 @@
 <template>
   <a-layout-header class="header">
     <div class="logo">
-      <router-link to="/welcome" style="color: white; font-size: 15px">12306购票系统</router-link>
+      <router-link to="/welcome" style="color: white; font-size: 15px">12306后台管理</router-link>
     </div>
     <div style="float: right; color: white;">
-      您好：{{member.mobile}} &nbsp;&nbsp;
-      <router-link to="/login" style="color: white;">
-        退出登录
-      </router-link>
+      欢迎使用12306购票系统
     </div>
     <a-menu
         v-model:selectedKeys="selectedKeys"
@@ -20,9 +17,9 @@
           <coffee-outlined /> &nbsp; 欢迎
         </router-link>
       </a-menu-item>
-      <a-menu-item key="/passenger">
-        <router-link to="/passenger">
-          <coffee-outlined /> &nbsp; 乘客管理
+      <a-menu-item key="/about">
+        <router-link to="/about">
+          <coffee-outlined /> &nbsp; 关于
         </router-link>
       </a-menu-item>
     </a-menu>
