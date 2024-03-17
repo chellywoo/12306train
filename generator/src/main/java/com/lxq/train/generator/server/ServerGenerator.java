@@ -67,10 +67,11 @@ public class ServerGenerator {
         param.put("typeSet", typeSet);
         System.out.println("组装参数 = " + param);
 
-        generateFile(Domain, param, "service","service");
-        generateFile(Domain, param, "req","queryReq");
+//        generateFile(Domain, param, "service","service");
 //        generateFile(Domain, param, "controller","controller");
-//        generateFile(Domain, param, "req", "saveReq");
+        generateFile(Domain, param, "req", "saveReq");
+        generateFile(Domain, param, "req","queryReq");
+        generateFile(Domain, param, "resp","queryResp");
 
     }
 
