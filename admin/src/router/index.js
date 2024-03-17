@@ -20,6 +20,10 @@ const routes = [
       path: 'station',
       name: 'station',
       component: () => import(/* webpackChunkName: "about" */ '../views/main/station.vue'),
+    },{
+      path: 'train',
+      name: 'train',
+      component: () => import(/* webpackChunkName: "about" */ '../views/main/train.vue'),
     }]
   },{
     path: '',

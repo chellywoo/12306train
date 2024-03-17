@@ -67,11 +67,11 @@ public class ServerGenerator {
         param.put("readOnly", readOnly);
         System.out.println("组装参数 = " + param);
 
-//        generateFile(Domain, param, "service","service");
+        generateFile(Domain, param, "service","service");
         generateFile(Domain, param, "controller/admin","adminController");
-//        generateFile(Domain, param, "req", "saveReq");
-//        generateFile(Domain, param, "req","queryReq");
-//        generateFile(Domain, param, "resp","queryResp");
+        generateFile(Domain, param, "req", "saveReq");
+        generateFile(Domain, param, "req","queryReq");
+        generateFile(Domain, param, "resp","queryResp");
 
         generateVue(do_main, param);
 
