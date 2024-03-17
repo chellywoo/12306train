@@ -8,7 +8,6 @@ import com.github.pagehelper.PageInfo;
 import com.lxq.train.common.context.LoginMemberContext;
 import com.lxq.train.common.resp.PageResp;
 import com.lxq.train.common.util.SnowUtil;
-import com.lxq.train.member.config.MemberApplication;
 import com.lxq.train.member.domain.Passenger;
 import com.lxq.train.member.domain.PassengerExample;
 import com.lxq.train.member.mapper.PassengerMapper;
@@ -25,7 +24,7 @@ import java.util.List;
 
 @Service
 public class PassengerService {
-    private static final Logger LOG = LoggerFactory.getLogger(MemberApplication.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PassengerService.class);
 
     @Resource
     private PassengerMapper passengerMapper;

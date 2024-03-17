@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono;
 @Component
 public class TestFilter implements GlobalFilter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(GatewayApplication.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TestFilter.class);
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         LOG.info("TestFilter");
