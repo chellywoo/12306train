@@ -171,11 +171,11 @@ export default defineComponent({
       })
     }
 
-    const handleTableChange = (pagination) => {
+    const handleTableChange = (clickPage) => {
       // console.log(pagination);
       handleQuery({
-        page: pagination.value.current,
-        size: pagination.value.pageSize
+        page: clickPage.current,
+        size: clickPage.pageSize
       })
     }
 

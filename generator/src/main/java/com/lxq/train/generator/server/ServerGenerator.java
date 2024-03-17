@@ -18,9 +18,6 @@ public class ServerGenerator {
     static String vuePath = "admin/src/views/main/";
     static String serverPath = "[module]/src/main/java/com/lxq/train/[module]/";
     static String pomPath = "generator/pom.xml";
-    static{
-        new File(serverPath).mkdirs();
-    }
 
     public static void main(String[] args) throws Exception {
         String generatorPath = generatorPath();
@@ -70,11 +67,11 @@ public class ServerGenerator {
         param.put("readOnly", readOnly);
         System.out.println("组装参数 = " + param);
 
-        generateFile(Domain, param, "service","service");
-        generateFile(Domain, param, "controller","controller");
-        generateFile(Domain, param, "req", "saveReq");
-        generateFile(Domain, param, "req","queryReq");
-        generateFile(Domain, param, "resp","queryResp");
+//        generateFile(Domain, param, "service","service");
+        generateFile(Domain, param, "controller/admin","adminController");
+//        generateFile(Domain, param, "req", "saveReq");
+//        generateFile(Domain, param, "req","queryReq");
+//        generateFile(Domain, param, "resp","queryResp");
 
         generateVue(do_main, param);
 
@@ -91,7 +88,7 @@ public class ServerGenerator {
     }
 
     private static void generateVue(String do_main, Map<String, Object> param) throws IOException, TemplateException {
-        FreemarkerUtil.initConfig("myVue.ftl");
+        FreemarkerUtil.initConfig("adminVue.ftl");
 //        new File(vuePath).mkdirs();
         String filename = vuePath + do_main + ".vue";
         System.out.println("开始生成" + filename);

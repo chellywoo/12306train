@@ -1,6 +1,5 @@
-package com.lxq.train.business.controller;
+package com.lxq.train.business.controller.admin;
 
-import com.lxq.train.common.context.LoginMemberContext;
 import com.lxq.train.common.resp.CommonResp;
 import com.lxq.train.common.resp.PageResp;
 import com.lxq.train.business.req.StationQueryReq;
@@ -12,8 +11,8 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/station")
-public class StationController {
+@RequestMapping("/admin/station")
+public class StationAdminController {
     @Resource
     private StationService stationService;
     @PostMapping("/save")

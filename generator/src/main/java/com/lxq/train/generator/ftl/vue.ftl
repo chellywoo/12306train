@@ -1,7 +1,8 @@
 <template>
+  <!--  <h1>乘客界面</h1>-->
   <p>
-    <a-space>
-      <#if !readOnly><a-button type="primary" @click="OnAdd"><user-add-outlined/>新增乘客</a-button></#if>
+    <a-space style="width: 100%">
+      <#if !readOnly><a-button type="primary" @click="OnAdd"><plus-outlined />新增</a-button></#if>
       <a-button type="primary" @click="handleQuery()"><sync-outlined/>刷新</a-button>
     </a-space>
   </p>
@@ -23,29 +24,32 @@
         </#if>
       </template>
       <#list fieldList as field>
-        <#if field.enums>
+      <#if field.enums>
       <template v-else-if="column.key === '${field.nameHump}'">
-        <span v-for="item in ${field.enumsConst}_ARRAY" :key="item.key">
-          <span v-if="item.key === record.${field.nameHump}">
-            {{ item.value }}
+        <span v-for="item in ${field.enumsConst}_ARRAY" :key="item.code">
+          <span v-if="item.code === record.${field.nameHump}">
+            {{ item.desc }}
           </span>
         </span>
       </template>
-        </#if>
+      </#if>
       </#list>
     </template>
   </a-table>
   <#if !readOnly>
   <a-modal v-model:visible="visible" title="${tableNameCn}" @ok="handleOk"
            ok-text="确认" cancel-text="取消">
-    <a-form :model="${domain}" :label-col="{span: 4}" :wrapper-col="{ span: 20 }">
+    <a-form
+        :model="${domain}"
+        :label-col="{ span: 4 }"
+        :wrapper-col="{ span: 20 }">
       <#list fieldList as field>
-        <#if field.name!="id" && field.nameHump!="createTime" && field.nameHump!="updateTime">
+      <#if field.name!="id" && field.nameHump!="createTime" && field.nameHump!="updateTime">
       <a-form-item label="${field.nameCn}">
         <#if field.enums>
         <a-select v-model:value="${domain}.${field.nameHump}">
-          <a-select-option v-for="item in ${field.enumsConst}_ARRAY" :key="item.key" :value="item.key">
-            {{item.value}}
+          <a-select-option v-for="item in ${field.enumsConst}_ARRAY" :key="item.code" :value="item.code">
+            {{ item.desc }}
           </a-select-option>
         </a-select>
         <#elseif field.javaType=='Date'>
@@ -57,24 +61,21 @@
         <a-date-picker v-model:value="${domain}.${field.nameHump}" valueFormat="YYYY-MM-DD HH:mm:ss" show-time placeholder="请选择日期" />
           </#if>
         <#else>
-        <a-input v-model:value="${domain}.${field.nameHump}" />
+        <a-input v-model:value="${domain}.${field.nameHump}"/>
         </#if>
       </a-form-item>
-
-        </#if>
+      </#if>
       </#list>
     </a-form>
   </a-modal>
   </#if>
 </template>
-
 <script>
-import { defineComponent, ref, onMounted } from 'vue';
-import {notification} from "ant-design-vue";
+import {defineComponent, onMounted, ref} from "vue";
 import axios from "axios";
+import {notification} from "ant-design-vue";
 
 export default defineComponent({
-  name: "${do_main}-view",
   setup() {
     <#list fieldList as field>
     <#if field.enums>
@@ -87,32 +88,33 @@ export default defineComponent({
       ${field.nameHump}: undefined,
       </#list>
     });
+
     const ${domain}s = ref([]);
-    let loading = ref(false);
     const columns = [
-    <#list fieldList as field>
+      <#list fieldList as field>
       <#if field.name!="id" && field.nameHump!="createTime" && field.nameHump!="updateTime">
       {
-      title: '${field.nameCn}',
-      dataIndex: '${field.nameHump}',
-      key: '${field.nameHump}',
-    },
+        title: '${field.nameCn}',
+        dataIndex: '${field.nameHump}',
+        key: '${field.nameHump}',
+      },
       </#if>
-    </#list>
-    <#if !readOnly>
-    {
-      title: '操作',
-      dataIndex: 'operation',
-      key: 'operation'
-    }
-    </#if>
+      </#list>
+      <#if !readOnly>
+      {
+        title: "操作",
+        dataIndex: 'operation',
+        key: 'operation'
+      }
+      </#if>
     ];
-
     const pagination = ref({
       total: 0,
       current: 1,
-      pageSize: 10,
-    });
+      pageSize: 6,
+    })
+
+    let loading = ref(false);
 
     <#if !readOnly>
     const OnAdd = () => {
@@ -123,37 +125,36 @@ export default defineComponent({
     const OnEdit = (record) => {
       ${domain}.value = window.Tool.copy(record);
       visible.value = true;
-    };
+    }
 
     const OnDelete = (record) => {
-      axios.delete("/${module}/${do_main}/delete/" + record.id).then((response) => {
-        const data = response.data;
+      axios.delete("/${module}/${domain}/delete/" + record.id).then((response) => {
+        let data = response.data;
         if (data.success) {
-          notification.success({description: "删除成功！"});
+          notification.success({description: "删除成功!"});
           handleQuery({
             page: pagination.value.current,
-            size: pagination.value.pageSize,
-          });
+            size: pagination.value.pageSize
+          })
         } else {
           notification.error({description: data.message});
         }
-      });
-    };
-
+      })
+    }
     const handleOk = () => {
-      axios.post("/${module}/${do_main}/save", ${domain}.value).then((response) => {
+      axios.post("/${module}/${domain}/save", ${domain}.value).then((response) => {
         let data = response.data;
         if (data.success) {
-          notification.success({description: "保存成功！"});
+          notification.success({description: "保存成功!"});
           visible.value = false;
           handleQuery({
             page: pagination.value.current,
             size: pagination.value.pageSize
-          });
+          })
         } else {
           notification.error({description: data.message});
         }
-      });
+      })
     };
     </#if>
 
@@ -162,27 +163,27 @@ export default defineComponent({
         param = {
           page: 1,
           size: pagination.value.pageSize
-        };
+        }
       }
       loading.value = true;
-      axios.get("/${module}/${do_main}/queryList", {
-        params: {
-          page: param.page,
-          size: param.size
-        }
-      }).then((response) => {
-        loading.value = false;
+      axios.get("/${module}/${domain}/queryList", {
+            params: {
+              page: param.page,
+              size: param.size
+            }
+          }
+      ).then((response) => {
         let data = response.data;
         if (data.success) {
+          loading.value = false;
           ${domain}s.value = data.content.list;
-          // 设置分页控件的值
-          pagination.value.current = param.page;
+          pagination.value.current = param.page;//如果不加这一行，点击第二页之后，虽然列表修改了但是页码还在第一页
           pagination.value.total = data.content.total;
         } else {
           notification.error({description: data.message});
         }
-      });
-    };
+      })
+    }
 
     const handleTableChange = (pagination) => {
       // console.log(pagination);
@@ -190,7 +191,7 @@ export default defineComponent({
         page: pagination.value.current,
         size: pagination.value.pageSize
       })
-    };
+    }
 
     onMounted(() => {
       handleQuery({
@@ -198,7 +199,6 @@ export default defineComponent({
         size: pagination.value.pageSize
       });
     });
-
     return {
       <#list fieldList as field>
       <#if field.enums>
@@ -210,16 +210,19 @@ export default defineComponent({
       columns,
       visible,
       ${domain},
-      handleTableChange,
-      handleQuery,
       loading,
+      handleQuery,
+      handleTableChange,
       <#if !readOnly>
       OnAdd,
-      handleOk,
       OnEdit,
-      OnDelete
+      OnDelete,
+      handleOk,
       </#if>
     };
   },
 });
 </script>
+<style>
+
+</style>

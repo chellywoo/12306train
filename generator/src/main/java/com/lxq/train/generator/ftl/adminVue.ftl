@@ -2,7 +2,7 @@
   <!--  <h1>乘客界面</h1>-->
   <p>
     <a-space style="width: 100%">
-      <#if !readOnly><a-button type="primary" @click="OnAdd"><user-add-outlined/>新增乘客</a-button></#if>
+      <#if !readOnly><a-button type="primary" @click="OnAdd"><plus-outlined />新增</a-button></#if>
       <a-button type="primary" @click="handleQuery()"><sync-outlined/>刷新</a-button>
     </a-space>
   </p>
@@ -128,7 +128,7 @@ export default defineComponent({
     }
 
     const OnDelete = (record) => {
-      axios.delete("/member/${domain}/delete/" + record.id).then((response) => {
+      axios.delete("/${module}/admin/${domain}/delete/" + record.id).then((response) => {
         let data = response.data;
         if (data.success) {
           notification.success({description: "删除成功!"});
@@ -142,7 +142,7 @@ export default defineComponent({
       })
     }
     const handleOk = () => {
-      axios.post("/member/${domain}/save", ${domain}.value).then((response) => {
+      axios.post("/${module}/admin/${domain}/save", ${domain}.value).then((response) => {
         let data = response.data;
         if (data.success) {
           notification.success({description: "保存成功!"});
@@ -166,7 +166,7 @@ export default defineComponent({
         }
       }
       loading.value = true;
-      axios.get("/member/${domain}/queryList", {
+      axios.get("/${module}/admin/${domain}/queryList", {
             params: {
               page: param.page,
               size: param.size
@@ -185,11 +185,11 @@ export default defineComponent({
       })
     }
 
-    const handleTableChange = (pagination) => {
+    const handleTableChange = (clickPage) => {
       // console.log(pagination);
       handleQuery({
-        page: pagination.value.current,
-        size: pagination.value.pageSize
+        page: clickPage.current,
+        size: clickPage.pageSize
       })
     }
 

@@ -2,7 +2,7 @@
   <!--  <h1>乘客界面</h1>-->
   <p>
     <a-space style="width: 100%">
-      <a-button type="primary" @click="OnAdd"><user-add-outlined/>新增乘客</a-button>
+      <a-button type="primary" @click="OnAdd"><plus-outlined />新增车站</a-button>
       <a-button type="primary" @click="handleQuery()"><sync-outlined/>刷新</a-button>
     </a-space>
   </p>
@@ -100,7 +100,7 @@ export default defineComponent({
     }
 
     const OnDelete = (record) => {
-      axios.delete("/member/station/delete/" + record.id).then((response) => {
+      axios.delete("/business/admin/station/delete/" + record.id).then((response) => {
         let data = response.data;
         if (data.success) {
           notification.success({description: "删除成功!"});
@@ -114,7 +114,7 @@ export default defineComponent({
       })
     }
     const handleOk = () => {
-      axios.post("/member/station/save", station.value).then((response) => {
+      axios.post("/business/admin/station/save", station.value).then((response) => {
         let data = response.data;
         if (data.success) {
           notification.success({description: "保存成功!"});
@@ -137,7 +137,7 @@ export default defineComponent({
         }
       }
       loading.value = true;
-      axios.get("/member/station/queryList", {
+      axios.get("/business/admin/station/queryList", {
             params: {
               page: param.page,
               size: param.size
@@ -156,11 +156,11 @@ export default defineComponent({
       })
     }
 
-    const handleTableChange = (pagination) => {
+    const handleTableChange = (clickPage) => {
       // console.log(pagination);
       handleQuery({
-        page: pagination.value.current,
-        size: pagination.value.pageSize
+        page: clickPage.current,
+        size: clickPage.pageSize
       })
     }
 
