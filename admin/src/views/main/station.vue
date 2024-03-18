@@ -137,7 +137,7 @@ export default defineComponent({
         }
       }
       loading.value = true;
-      axios.get("/business/admin/station/queryList", {
+      axios.get("/business/admin/station/query-list", {
             params: {
               page: param.page,
               size: param.size

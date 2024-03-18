@@ -12,7 +12,7 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/${domain}")
+@RequestMapping("/${do_main}")
 public class ${Domain}Controller {
     @Resource
     private ${Domain}Service ${domain}Service;
@@ -22,7 +22,7 @@ public class ${Domain}Controller {
         return new CommonResp<>();
     }
 
-    @GetMapping("/queryList")
+    @GetMapping("/query-list")
     public CommonResp<PageResp<${Domain}QueryResp>> queryList(@Valid ${Domain}QueryReq req){
         PageResp<${Domain}QueryResp> query = ${domain}Service.query(req);
         return new CommonResp<>(query);

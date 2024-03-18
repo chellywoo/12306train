@@ -21,7 +21,7 @@ public class TrainAdminController {
         return new CommonResp<>();
     }
 
-    @GetMapping("/queryList")
+    @GetMapping("/query-list")
     public CommonResp<PageResp<TrainQueryResp>> queryList(@Valid TrainQueryReq req){
         PageResp<TrainQueryResp> query = trainService.query(req);
         return new CommonResp<>(query);
