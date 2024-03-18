@@ -32,6 +32,10 @@ const routes = [
       path: 'train_carriage',
       name: 'train_carriage',
       component: () => import(/* webpackChunkName: "about" */ '../views/main/train-carriage.vue'),
+    },{
+      path: 'train_seat',
+      name: 'train_seat',
+      component: () => import(/* webpackChunkName: "about" */ '../views/main/train-seat.vue'),
     }]
   },{
     path: '',

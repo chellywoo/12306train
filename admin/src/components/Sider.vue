@@ -35,6 +35,11 @@
           <coffee-outlined /> &nbsp; 车厢管理
         </router-link>
       </a-menu-item>
+      <a-menu-item key="/train_seat">
+        <router-link to="/train_seat">
+          <coffee-outlined /> &nbsp; 车座管理
+        </router-link>
+      </a-menu-item>
     </a-menu>
   </a-layout-sider>
 </template>
