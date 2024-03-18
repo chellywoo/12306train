@@ -1,10 +1,10 @@
 package com.lxq.train.business.req;
 
-import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
+import java.util.Date;
 
 public class TrainCarriageSaveReq {
 
@@ -34,19 +34,19 @@ public class TrainCarriageSaveReq {
     /**
      * 座位数
      */
-    @NotNull(message = "座位数不能为空")
+//    @NotNull(message = "座位数不能为空")
     private Integer seatCount;
 
     /**
      * 排数
      */
-    @NotNull(message = "排数不能为空")
+    @NotNull(message = "行数不能为空")
     private Integer rowCount;
 
     /**
      * 列数
      */
-    @NotNull(message = "列数不能为空")
+//    @NotNull(message = "列数不能为空")
     private Integer colCount;
 
     /**

@@ -5,14 +5,15 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.lxq.train.common.resp.PageResp;
-import com.lxq.train.common.util.SnowUtil;
 import com.lxq.train.business.domain.TrainCarriage;
 import com.lxq.train.business.domain.TrainCarriageExample;
+import com.lxq.train.business.enums.SeatColEnum;
 import com.lxq.train.business.mapper.TrainCarriageMapper;
 import com.lxq.train.business.req.TrainCarriageQueryReq;
 import com.lxq.train.business.req.TrainCarriageSaveReq;
 import com.lxq.train.business.resp.TrainCarriageQueryResp;
+import com.lxq.train.common.resp.PageResp;
+import com.lxq.train.common.util.SnowUtil;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,9 +28,14 @@ public class TrainCarriageService {
 
     @Resource
     private TrainCarriageMapper trainCarriageMapper;
-    public void save(TrainCarriageSaveReq trainCarriageSaveReq){
+    public void save(TrainCarriageSaveReq req){
         DateTime now = new DateTime();
-        TrainCarriage trainCarriage = BeanUtil.copyProperties(trainCarriageSaveReq, TrainCarriage.class);
+        // 自动计算出列数和总座位数
+        List<SeatColEnum> seatColEnums = SeatColEnum.getColsByType(req.getSeatType());
+        req.setColCount(seatColEnums.size());
+        req.setSeatCount(req.getColCount() * req.getRowCount());
+
+        TrainCarriage trainCarriage = BeanUtil.copyProperties(req, TrainCarriage.class);
         if (ObjectUtil.isNull(trainCarriage.getId())) {
             trainCarriage.setId(SnowUtil.getSnowFlakeNextId());
             trainCarriage.setCreateTime(now);
