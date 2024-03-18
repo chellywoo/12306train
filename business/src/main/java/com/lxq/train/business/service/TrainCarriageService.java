@@ -43,7 +43,7 @@ public class TrainCarriageService {
 
     public PageResp<TrainCarriageQueryResp> query(TrainCarriageQueryReq req){
         TrainCarriageExample trainCarriageExample = new TrainCarriageExample();
-        trainCarriageExample.setOrderByClause("id DESC");
+        trainCarriageExample.setOrderByClause("train_code asc, `index` asc");
         TrainCarriageExample.Criteria trainCarriageExampleCriteria = trainCarriageExample.createCriteria();
         if(ObjectUtil.isNotEmpty(req.getTrainCode())){
             trainCarriageExampleCriteria.andTrainCodeEqualTo(req.getTrainCode());
@@ -67,5 +67,14 @@ public class TrainCarriageService {
 
     public void delete(Long id ){
         trainCarriageMapper.deleteByPrimaryKey(id);
+    }
+
+    public List<TrainCarriage> selectByTrainCode(String trainCode){
+        TrainCarriageExample trainCarriageExample = new TrainCarriageExample();
+        trainCarriageExample.setOrderByClause("`index` asc");
+        TrainCarriageExample.Criteria trainCarriageExampleCriteria = trainCarriageExample.createCriteria();
+        trainCarriageExampleCriteria.andTrainCodeEqualTo(trainCode);
+        List<TrainCarriage> carriageList = trainCarriageMapper.selectByExample(trainCarriageExample);
+        return carriageList;
     }
 }
