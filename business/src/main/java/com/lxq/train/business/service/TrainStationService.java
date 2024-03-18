@@ -43,8 +43,11 @@ public class TrainStationService {
 
     public PageResp<TrainStationQueryResp> query(TrainStationQueryReq req){
         TrainStationExample trainStationExample = new TrainStationExample();
-        trainStationExample.setOrderByClause("id DESC");
+        trainStationExample.setOrderByClause("train_code asc, `index` asc");
         TrainStationExample.Criteria trainStationExampleCriteria = trainStationExample.createCriteria();
+        if(ObjectUtil.isNotEmpty(req.getTrainCode())){
+            trainStationExampleCriteria.andTrainCodeEqualTo(req.getTrainCode());
+        }
 
         LOG.info("查询页数为："+ req.getPage());
         LOG.info("每页条数为："+ req.getSize());

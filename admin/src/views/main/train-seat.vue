@@ -2,8 +2,9 @@
   <!--  <h1>乘客界面</h1>-->
   <p>
     <a-space style="width: 100%">
+      <train-select-view v-model="params.trainCode" width="200px"/>
+      <a-button type="primary" @click="handleQuery()">查找</a-button>
       <a-button type="primary" @click="OnAdd"><plus-outlined />新增</a-button>
-      <a-button type="primary" @click="handleQuery()"><sync-outlined/>刷新</a-button>
     </a-space>
   </p>
   <a-table :dataSource="trainSeats"
@@ -142,6 +143,10 @@ export default defineComponent({
 
     let loading = ref(false);
 
+    let params = ref({
+      trainCode: null
+    })
+
     const OnAdd = () => {
       trainSeat.value = {};
       visible.value = true;
@@ -193,7 +198,8 @@ export default defineComponent({
       axios.get("/business/admin/train-seat/query-list", {
             params: {
               page: param.page,
-              size: param.size
+              size: param.size,
+              trainCode: params.value.trainCode
             }
           }
       ).then((response) => {
@@ -238,6 +244,7 @@ export default defineComponent({
       OnEdit,
       OnDelete,
       handleOk,
+      params
     };
   },
 });

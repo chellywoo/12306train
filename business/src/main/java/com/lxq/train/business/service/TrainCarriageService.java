@@ -45,6 +45,9 @@ public class TrainCarriageService {
         TrainCarriageExample trainCarriageExample = new TrainCarriageExample();
         trainCarriageExample.setOrderByClause("id DESC");
         TrainCarriageExample.Criteria trainCarriageExampleCriteria = trainCarriageExample.createCriteria();
+        if(ObjectUtil.isNotEmpty(req.getTrainCode())){
+            trainCarriageExampleCriteria.andTrainCodeEqualTo(req.getTrainCode());
+        }
 
         LOG.info("查询页数为："+ req.getPage());
         LOG.info("每页条数为："+ req.getSize());

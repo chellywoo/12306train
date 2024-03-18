@@ -2,7 +2,7 @@
   <!--  <h1>乘客界面</h1>-->
   <p>
     <a-space style="width: 100%">
-      <a-button type="primary" @click="OnAdd"><plus-outlined />新增</a-button>
+      <a-button type="primary" @click="OnAdd"><plus-outlined />新增车次</a-button>
       <a-button type="primary" @click="handleQuery()"><sync-outlined/>刷新</a-button>
     </a-space>
   </p>
