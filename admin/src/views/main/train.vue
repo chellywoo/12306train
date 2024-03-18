@@ -19,6 +19,10 @@
             <delete-outlined style="color: red"/>
             <a style="color: red">删除</a>
           </a-popconfirm>
+          <a-popconfirm title="生成座位后会覆盖原座位不可恢复，确定生成?" ok-text="确认" cancel-text="取消" @confirm="generateSeat(record)">
+            <insert-row-above-outlined  style="color: forestgreen"/>
+            <a style="color: forestgreen">生成座位</a>
+          </a-popconfirm>
         </a-space>
       </template>
       <template v-else-if="column.key === 'type'">
@@ -189,6 +193,17 @@ export default defineComponent({
         }
       })
     }
+    const generateSeat = (record) => {
+      axios.get("/business/admin/train/gen-seat/" + record.code).then((response) => {
+        let data = response.data;
+        if (data.success) {
+          notification.success({description: "生成成功!"});
+        } else {
+          notification.error({description: data.message});
+        }
+      })
+    }
+
     const handleOk = () => {
       axios.post("/business/admin/train/save", train.value).then((response) => {
         let data = response.data;
@@ -260,6 +275,7 @@ export default defineComponent({
       OnEdit,
       OnDelete,
       handleOk,
+      generateSeat
     };
   },
 });
