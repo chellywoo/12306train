@@ -1,0 +1,7 @@
+###
+
+GET http://localhost:8000/business/admin/trainStation/queryList?page=1&size=3
+Accept: application/json
+token: {{token}}
+
+###

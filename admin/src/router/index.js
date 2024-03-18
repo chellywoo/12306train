@@ -24,6 +24,10 @@ const routes = [
       path: 'train',
       name: 'train',
       component: () => import(/* webpackChunkName: "about" */ '../views/main/train.vue'),
+    },{
+      path: 'train-station',
+      name: 'train-station',
+      component: () => import(/* webpackChunkName: "about" */ '../views/main/train-station.vue'),
     }]
   },{
     path: '',

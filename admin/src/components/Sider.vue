@@ -25,6 +25,11 @@
           <coffee-outlined /> &nbsp; 车次管理
         </router-link>
       </a-menu-item>
+      <a-menu-item key="/train-station">
+        <router-link to="/train-station">
+          <coffee-outlined /> &nbsp; 车站大屏
+        </router-link>
+      </a-menu-item>
     </a-menu>
   </a-layout-sider>
 </template>
