@@ -15,9 +15,14 @@
           <coffee-outlined /> &nbsp; 关于
         </router-link>
       </a-menu-item>
+      <a-menu-item key="/batch/job">
+        <router-link to="/batch/job">
+          <carry-out-outlined /> &nbsp; 跑批管理
+        </router-link>
+      </a-menu-item>
       <a-menu-item key="/station">
         <router-link to="/station">
-          <coffee-outlined /> &nbsp; 车站管理
+          <bars-outlined /> &nbsp; 车站管理
         </router-link>
       </a-menu-item>
       <a-menu-item key="/train">
