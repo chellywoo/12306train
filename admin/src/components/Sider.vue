@@ -2,49 +2,66 @@
   <a-layout-sider width="200" style="background: #fff">
     <a-menu
         v-model:selectedKeys="selectedKeys"
+        :open-keys="['batch','base']"
         mode="inline"
         :style="{ height: '100%', borderRight: 0 }"
     >
       <a-menu-item key="/welcome">
         <router-link to="/welcome">
-          <coffee-outlined /> &nbsp; 欢迎
+          <coffee-outlined/> &nbsp; 欢迎
         </router-link>
       </a-menu-item>
       <a-menu-item key="/about">
         <router-link to="/about">
-          <coffee-outlined /> &nbsp; 关于
+          <coffee-outlined/> &nbsp; 关于
         </router-link>
       </a-menu-item>
-      <a-menu-item key="/batch/job">
-        <router-link to="/batch/job">
-          <carry-out-outlined /> &nbsp; 跑批管理
-        </router-link>
-      </a-menu-item>
-      <a-menu-item key="/station">
-        <router-link to="/station">
-          <bars-outlined /> &nbsp; 车站管理
-        </router-link>
-      </a-menu-item>
-      <a-menu-item key="/train">
-        <router-link to="/train">
-          <coffee-outlined /> &nbsp; 车次管理
-        </router-link>
-      </a-menu-item>
-      <a-menu-item key="/train-station">
-        <router-link to="/train-station">
-          <coffee-outlined /> &nbsp; 车站大屏
-        </router-link>
-      </a-menu-item>
-      <a-menu-item key="/train_carriage">
-        <router-link to="/train_carriage">
-          <coffee-outlined /> &nbsp; 车厢管理
-        </router-link>
-      </a-menu-item>
-      <a-menu-item key="/train_seat">
-        <router-link to="/train_seat">
-          <coffee-outlined /> &nbsp; 车座管理
-        </router-link>
-      </a-menu-item>
+      <a-sub-menu key="batch">
+        <template #title>
+          <span>
+            <UnorderedListOutlined/>
+            跑批管理
+          </span>
+        </template>
+        <a-menu-item key="/batch/job">
+          <router-link to="/batch/job">
+            <carry-out-outlined/> &nbsp; 任务管理
+          </router-link>
+        </a-menu-item>
+      </a-sub-menu>
+      <a-sub-menu key="base">
+        <template #title>
+          <span>
+            <UnorderedListOutlined/>
+            基础数据
+          </span>
+        </template>
+        <a-menu-item key="/base/station">
+          <router-link to="/base/station">
+            <home-outlined /> &nbsp; 车站管理
+          </router-link>
+        </a-menu-item>
+        <a-menu-item key="/base/train">
+          <router-link to="/base/train">
+            <car-outlined /> &nbsp; 车次管理
+          </router-link>
+        </a-menu-item>
+        <a-menu-item key="/base/train-station">
+          <router-link to="/base/train-station">
+            <star-outlined /> &nbsp; 车站大屏
+          </router-link>
+        </a-menu-item>
+        <a-menu-item key="/base/train_carriage">
+          <router-link to="/base/train_carriage">
+            <database-outlined /> &nbsp; 车厢管理
+          </router-link>
+        </a-menu-item>
+        <a-menu-item key="/base/train_seat">
+          <router-link to="/base/train_seat">
+            <user-outlined /> &nbsp; 车座管理
+          </router-link>
+        </a-menu-item>
+      </a-sub-menu>
     </a-menu>
   </a-layout-sider>
 </template>
