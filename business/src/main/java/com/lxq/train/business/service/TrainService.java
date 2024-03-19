@@ -1,10 +1,13 @@
 package com.lxq.train.business.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.lxq.train.common.exception.BusinessException;
+import com.lxq.train.common.exception.BusinessExceptionEnum;
 import com.lxq.train.common.resp.PageResp;
 import com.lxq.train.common.util.SnowUtil;
 import com.lxq.train.business.domain.Train;
@@ -27,10 +30,13 @@ public class TrainService {
 
     @Resource
     private TrainMapper trainMapper;
-    public void save(TrainSaveReq trainSaveReq){
+    public void save(TrainSaveReq req){
         DateTime now = new DateTime();
-        Train train = BeanUtil.copyProperties(trainSaveReq, Train.class);
+        Train train = BeanUtil.copyProperties(req, Train.class);
         if (ObjectUtil.isNull(train.getId())) {
+            Train trainDB = selectByUnique(req.getCode());
+            if (ObjectUtil.isNotEmpty(trainDB))
+                throw new BusinessException(BusinessExceptionEnum.BUSINESS_TRAIN_CODE_UNIQUE_ERROR);
             train.setId(SnowUtil.getSnowFlakeNextId());
             train.setCreateTime(now);
             train.setUpdateTime(now);
@@ -39,6 +45,17 @@ public class TrainService {
             train.setUpdateTime(now);
             trainMapper.updateByPrimaryKey(train);
         }
+    }
+
+    private Train selectByUnique(String code) {
+        TrainExample trainExample = new TrainExample();
+        TrainExample.Criteria criteria = trainExample.createCriteria();
+        criteria.andCodeEqualTo(code);
+        List<Train> trains = trainMapper.selectByExample(trainExample);
+        if(CollUtil.isNotEmpty(trains))
+            return trains.get(0);
+        else
+            return null;
     }
 
     public PageResp<TrainQueryResp> query(TrainQueryReq req){

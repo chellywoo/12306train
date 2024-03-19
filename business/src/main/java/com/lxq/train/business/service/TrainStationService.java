@@ -1,18 +1,21 @@
 package com.lxq.train.business.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.lxq.train.common.resp.PageResp;
-import com.lxq.train.common.util.SnowUtil;
 import com.lxq.train.business.domain.TrainStation;
 import com.lxq.train.business.domain.TrainStationExample;
 import com.lxq.train.business.mapper.TrainStationMapper;
 import com.lxq.train.business.req.TrainStationQueryReq;
 import com.lxq.train.business.req.TrainStationSaveReq;
 import com.lxq.train.business.resp.TrainStationQueryResp;
+import com.lxq.train.common.exception.BusinessException;
+import com.lxq.train.common.exception.BusinessExceptionEnum;
+import com.lxq.train.common.resp.PageResp;
+import com.lxq.train.common.util.SnowUtil;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +30,17 @@ public class TrainStationService {
 
     @Resource
     private TrainStationMapper trainStationMapper;
-    public void save(TrainStationSaveReq trainStationSaveReq){
+    public void save(TrainStationSaveReq req){
         DateTime now = new DateTime();
-        TrainStation trainStation = BeanUtil.copyProperties(trainStationSaveReq, TrainStation.class);
+        TrainStation trainStation = BeanUtil.copyProperties(req, TrainStation.class);
         if (ObjectUtil.isNull(trainStation.getId())) {
+            TrainStation trainStationDB = selectByUnique(req.getTrainCode(), req.getIndex());
+            if (ObjectUtil.isNotEmpty(trainStationDB))
+                throw new BusinessException(BusinessExceptionEnum.BUSINESS_TRAIN_STATION_INDEX_UNIQUE_ERROR);
+            trainStationDB = selectByUnique(req.getTrainCode(), req.getName());
+            if(ObjectUtil.isNotEmpty(trainStationDB))
+                throw new BusinessException(BusinessExceptionEnum.BUSINESS_TRAIN_STATION_NAME_UNIQUE_ERROR);
+
             trainStation.setId(SnowUtil.getSnowFlakeNextId());
             trainStation.setCreateTime(now);
             trainStation.setUpdateTime(now);
@@ -39,6 +49,26 @@ public class TrainStationService {
             trainStation.setUpdateTime(now);
             trainStationMapper.updateByPrimaryKey(trainStation);
         }
+    }
+
+    private TrainStation selectByUnique(String trainCode, Integer index) {
+        TrainStationExample trainStationExample = new TrainStationExample();
+        trainStationExample.createCriteria().andTrainCodeEqualTo(trainCode).andIndexEqualTo(index);
+        List<TrainStation> list = trainStationMapper.selectByExample(trainStationExample);
+        if(CollUtil.isNotEmpty(list))
+            return list.get(0);
+        else
+            return null;
+    }
+
+    private TrainStation selectByUnique(String trainCode, String name) {
+        TrainStationExample trainStationExample = new TrainStationExample();
+        trainStationExample.createCriteria().andTrainCodeEqualTo(trainCode).andNameEqualTo(name);
+        List<TrainStation> list = trainStationMapper.selectByExample(trainStationExample);
+        if(CollUtil.isNotEmpty(list))
+            return list.get(0);
+        else
+            return null;
     }
 
     public PageResp<TrainStationQueryResp> query(TrainStationQueryReq req){
