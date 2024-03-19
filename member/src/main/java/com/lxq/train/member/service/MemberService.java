@@ -6,7 +6,6 @@ import com.lxq.train.common.exception.BusinessException;
 import com.lxq.train.common.exception.BusinessExceptionEnum;
 import com.lxq.train.common.util.JwtUtil;
 import com.lxq.train.common.util.SnowUtil;
-import com.lxq.train.member.config.MemberApplication;
 import com.lxq.train.member.domain.Member;
 import com.lxq.train.member.domain.MemberExample;
 import com.lxq.train.member.mapper.MemberMapper;
@@ -49,7 +48,7 @@ public class MemberService {
 
         // 如果表中已经存在，返回手机号已注册
         if(ObjectUtil.isNotNull(mem)){
-            throw new BusinessException(BusinessExceptionEnum.MOBILE_ALREADY_EXIST);
+            throw new BusinessException(BusinessExceptionEnum.MEMBER_MOBILE_ALREADY_EXIST);
         }
 //            return list.get(0).getId();
 //            throw new RuntimeException("手机号已被注册！");
@@ -98,11 +97,11 @@ public class MemberService {
 
         // 如果表中没有，那么将数据存到该表中
         if(ObjectUtil.isNull(mem)){
-            throw new BusinessException(BusinessExceptionEnum.MOBILE_NOT_EXIST);
+            throw new BusinessException(BusinessExceptionEnum.MEMBER_MOBILE_NOT_EXIST);
         }
 
         if(!"8888".equals(code)){
-            throw new BusinessException(BusinessExceptionEnum.CODE_ERROR);
+            throw new BusinessException(BusinessExceptionEnum.MEMBER_CODE_ERROR);
         }
 
         MemberLoginResp memberLoginResp = BeanUtil.copyProperties(mem, MemberLoginResp.class);

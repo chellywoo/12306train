@@ -1,18 +1,21 @@
 package com.lxq.train.business.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.lxq.train.common.resp.PageResp;
-import com.lxq.train.common.util.SnowUtil;
 import com.lxq.train.business.domain.Station;
 import com.lxq.train.business.domain.StationExample;
 import com.lxq.train.business.mapper.StationMapper;
 import com.lxq.train.business.req.StationQueryReq;
 import com.lxq.train.business.req.StationSaveReq;
 import com.lxq.train.business.resp.StationQueryResp;
+import com.lxq.train.common.exception.BusinessException;
+import com.lxq.train.common.exception.BusinessExceptionEnum;
+import com.lxq.train.common.resp.PageResp;
+import com.lxq.train.common.util.SnowUtil;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +30,17 @@ public class StationService {
 
     @Resource
     private StationMapper stationMapper;
-    public void save(StationSaveReq stationSaveReq){
+    public void save(StationSaveReq req){
         DateTime now = new DateTime();
-        Station station = BeanUtil.copyProperties(stationSaveReq, Station.class);
+        Station station = BeanUtil.copyProperties(req, Station.class);
         if (ObjectUtil.isNull(station.getId())) {
+            // 唯一性判断
+            StationExample stationExample = new StationExample();
+            StationExample.Criteria criteria = stationExample.createCriteria();
+            criteria.andNameEqualTo(req.getName());
+            List<Station> stations = stationMapper.selectByExample(stationExample);
+            if(CollUtil.isNotEmpty(stations))
+                throw new BusinessException(BusinessExceptionEnum.BUSINESS_STATION_UNIQUE_ERROR);
             station.setId(SnowUtil.getSnowFlakeNextId());
             station.setCreateTime(now);
             station.setUpdateTime(now);

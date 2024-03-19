@@ -1,9 +1,10 @@
 package com.lxq.train.common.exception;
 
 public enum BusinessExceptionEnum {
-    MOBILE_ALREADY_EXIST("手机号已注册"),
-    MOBILE_NOT_EXIST("请先获取验证码"),
-    CODE_ERROR("验证码错误"),
+    MEMBER_MOBILE_ALREADY_EXIST("手机号已注册"),
+    MEMBER_MOBILE_NOT_EXIST("请先获取验证码"),
+    MEMBER_CODE_ERROR("验证码错误"),
+    BUSINESS_STATION_UNIQUE_ERROR("车站已存在"),
 
     ;
     private String desc;
