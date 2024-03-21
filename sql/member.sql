@@ -18,7 +18,7 @@ select * from member;
 drop table if exists `passenger`;
 create table `passenger` (
                              `id` bigint not null comment 'id',
-                             `member_id` bigint not null comment '会员id',
+                             `member_id` bigint not null comment '用户id',
                              `name` varchar(20) not null comment '姓名',
                              `id_card` varchar(18) not null comment '身份证',
                              `type` char(1) not null comment '旅客类型|枚举[PassengerTypeEnum]',

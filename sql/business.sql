@@ -116,10 +116,10 @@ create table `daily_train_carriage` (
   `id` bigint not null comment 'id',
   `date` date not null comment '日期',
   `train_code` varchar(20) not null comment '车次编号',
-  `index` int not null comment '箱序',
+  `index` int not null comment '厢号',
   `seat_type` char(1) not null comment '座位类型|枚举[SeatTypeEnum]',
   `seat_count` int not null comment '座位数',
-  `row_count` int not null comment '排数',
+  `row_count` int not null comment '行数',
   `col_count` int not null comment '列数',
   `create_time` datetime(3) comment '新增时间',
   `update_time` datetime(3) comment '修改时间',
@@ -173,7 +173,7 @@ create table `daily_train_ticket` (
 drop table if exists `confirm_order`;
 create table `confirm_order` (
   `id` bigint not null comment 'id',
-  `member_id` bigint not null comment '会员id',
+  `member_id` bigint not null comment '用户id',
   `date` date not null comment '日期',
   `train_code` varchar(20) not null comment '车次编号',
   `start` varchar(20) not null comment '出发站',
