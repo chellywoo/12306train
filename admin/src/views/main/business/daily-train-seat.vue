@@ -17,7 +17,7 @@
       </template>
       <template v-else-if="column.key === 'col'">
         <span v-for="item in SEAT_COL_ARRAY" :key="item.code">
-          <span v-if="item.code === record.col">
+          <span v-if="item.code === record.col && item.type === record.seatType">
             {{ item.desc }}
           </span>
         </span>
@@ -76,7 +76,7 @@ export default defineComponent({
         key: 'carriageIndex',
       },
       {
-        title: '排号',
+        title: '行号',
         dataIndex: 'row',
         key: 'row',
       },
