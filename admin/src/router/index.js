@@ -39,6 +39,10 @@ const routes = [
                 path: 'daily-train-carriage',
                 name: 'daily-train-carriage',
                 component: () => import(/* webpackChunkName: "about" */ '../views/main/business/daily-train-carriage.vue'),
+            },{
+                path: 'daily-train-seat',
+                name: 'daily-train-seat',
+                component: () => import(/* webpackChunkName: "about" */ '../views/main/business/daily-train-seat.vue'),
             }]
         }, {
             path: 'base/',
