@@ -25,6 +25,14 @@ const routes = [
                 component: () => import(/* webpackChunkName: "about" */ '../views/main/batch/job.vue'),
             }]
         }, {
+            path: 'business/',
+            name: 'business/',
+            children: [{
+                path: 'daily-train',
+                name: 'daily-train',
+                component: () => import(/* webpackChunkName: "about" */ '../views/main/business/daily-train.vue'),
+            }]
+        }, {
             path: 'base/',
             name: 'base/',
             children: [{
