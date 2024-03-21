@@ -60,7 +60,7 @@ public class TrainService {
 
     public PageResp<TrainQueryResp> query(TrainQueryReq req){
         TrainExample trainExample = new TrainExample();
-        trainExample.setOrderByClause("id DESC");
+        trainExample.setOrderByClause("code asc");
         TrainExample.Criteria trainExampleCriteria = trainExample.createCriteria();
 
         LOG.info("查询页数为："+ req.getPage());

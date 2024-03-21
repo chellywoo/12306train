@@ -27,9 +27,9 @@ public class ${Domain}Service {
 
     @Resource
     private ${Domain}Mapper ${domain}Mapper;
-    public void save(${Domain}SaveReq ${domain}SaveReq){
+    public void save(${Domain}SaveReq req){
         DateTime now = new DateTime();
-        ${Domain} ${domain} = BeanUtil.copyProperties(${domain}SaveReq, ${Domain}.class);
+        ${Domain} ${domain} = BeanUtil.copyProperties(req, ${Domain}.class);
         if (ObjectUtil.isNull(${domain}.getId())) {
             ${domain}.setId(SnowUtil.getSnowFlakeNextId());
             ${domain}.setCreateTime(now);
@@ -44,7 +44,7 @@ public class ${Domain}Service {
     public PageResp<${Domain}QueryResp> query(${Domain}QueryReq req){
         ${Domain}Example ${domain}Example = new ${Domain}Example();
         ${domain}Example.setOrderByClause("id DESC");
-        ${Domain}Example.Criteria ${domain}ExampleCriteria = ${domain}Example.createCriteria();
+        ${Domain}Example.Criteria criteria = ${domain}Example.createCriteria();
 
         LOG.info("查询页数为："+ req.getPage());
         LOG.info("每页条数为："+ req.getSize());
@@ -52,7 +52,7 @@ public class ${Domain}Service {
         List<${Domain}> ${domain}List = ${domain}Mapper.selectByExample(${domain}Example);
 
         PageInfo pageInfo = new PageInfo<>(${domain}List);
-        LOG.info("乘客总数为："+ pageInfo.getTotal());
+        LOG.info("总数为："+ pageInfo.getTotal());
         LOG.info("最大分配的页数为："+ pageInfo.getPages());
         List<${Domain}QueryResp> ${domain}QueryResp = BeanUtil.copyToList(${domain}List, ${Domain}QueryResp.class);
 

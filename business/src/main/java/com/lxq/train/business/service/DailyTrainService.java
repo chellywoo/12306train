@@ -27,9 +27,9 @@ public class DailyTrainService {
 
     @Resource
     private DailyTrainMapper dailyTrainMapper;
-    public void save(DailyTrainSaveReq dailyTrainSaveReq){
+    public void save(DailyTrainSaveReq req){
         DateTime now = new DateTime();
-        DailyTrain dailyTrain = BeanUtil.copyProperties(dailyTrainSaveReq, DailyTrain.class);
+        DailyTrain dailyTrain = BeanUtil.copyProperties(req, DailyTrain.class);
         if (ObjectUtil.isNull(dailyTrain.getId())) {
             dailyTrain.setId(SnowUtil.getSnowFlakeNextId());
             dailyTrain.setCreateTime(now);
@@ -43,8 +43,16 @@ public class DailyTrainService {
 
     public PageResp<DailyTrainQueryResp> query(DailyTrainQueryReq req){
         DailyTrainExample dailyTrainExample = new DailyTrainExample();
-        dailyTrainExample.setOrderByClause("id DESC");
-        DailyTrainExample.Criteria dailyTrainExampleCriteria = dailyTrainExample.createCriteria();
+        dailyTrainExample.setOrderByClause("date desc, code asc");
+        DailyTrainExample.Criteria criteria = dailyTrainExample.createCriteria();
+
+        if(ObjectUtil.isNotNull(req.getDate())){
+            criteria.andDateEqualTo(req.getDate());
+        }
+
+        if(ObjectUtil.isNotEmpty(req.getCode())){
+            criteria.andCodeEqualTo(req.getCode());
+        }
 
         LOG.info("查询页数为："+ req.getPage());
         LOG.info("每页条数为："+ req.getSize());

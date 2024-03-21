@@ -2,8 +2,10 @@
   <!--  <h1>乘客界面</h1>-->
   <p>
     <a-space style="width: 100%">
+      <a-date-picker v-model:value="params.date" valueFormat="YYYY-MM-DD" placeholder="请选择日期" />
+      <train-select-view v-model="params.code" width="200px"/>
+      <a-button type="primary" @click="handleQuery()">查找</a-button>
       <a-button type="primary" @click="OnAdd"><plus-outlined />新增</a-button>
-      <a-button type="primary" @click="handleQuery()"><sync-outlined/>刷新</a-button>
     </a-space>
   </p>
   <a-table :dataSource="dailyTrains"
@@ -157,6 +159,11 @@ export default defineComponent({
 
     let loading = ref(false);
 
+    let params = ref({
+      code: null,
+      date: null
+    });
+
     const OnAdd = () => {
       dailyTrain.value = {};
       visible.value = true;
@@ -208,7 +215,9 @@ export default defineComponent({
       axios.get("/business/admin/daily-train/query-list", {
             params: {
               page: param.page,
-              size: param.size
+              size: param.size,
+              code: params.value.code,
+              date: params.value.date
             }
           }
       ).then((response) => {
@@ -260,7 +269,8 @@ export default defineComponent({
       OnEdit,
       OnDelete,
       handleOk,
-      OnChange
+      OnChange,
+      params,
     };
   },
 });
