@@ -50,8 +50,31 @@ POST http://localhost:8000/batch/admin/job/delete
 Content-Type: application/json
 
 {
-"name": "com.lxq.train.batch.job.TestJob",
+"name": "com.lxq.train.batch.job.DailyTrainJob",
 "jobGroupName": "default"
+}
+
+###
+
+POST http://localhost:8000/batch/admin/job/run
+Content-Type: application/json
+
+{
+"name": "com.lxq.train.batch.job.DailyTrainJob",
+"jobGroupName": "default"
+}
+
+
+###
+
+POST http://localhost:8000/batch/admin/job/add
+Content-Type: application/json
+
+{
+  "name": "com.lxq.train.batch.job.DailyTrainJob",
+  "jobGroupName": "default",
+  "cronExpression": "4/5 * * * * ?",
+  "desc": "daily train job"
 }
 
 ###

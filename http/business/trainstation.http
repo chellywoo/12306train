@@ -10,3 +10,9 @@ GET http://localhost:8000/business/admin/train/query-all
 Accept: application/json
 
 ###
+
+
+GET http://localhost:8000/business/admin/daily-train/generate-daily/2024-04-06
+Accept: application/json
+
+###
