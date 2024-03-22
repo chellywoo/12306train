@@ -96,9 +96,7 @@ public class TrainCarriageService {
     public List<TrainCarriage> selectByTrainCode(String trainCode){
         TrainCarriageExample trainCarriageExample = new TrainCarriageExample();
         trainCarriageExample.setOrderByClause("`index` asc");
-        TrainCarriageExample.Criteria trainCarriageExampleCriteria = trainCarriageExample.createCriteria();
-        trainCarriageExampleCriteria.andTrainCodeEqualTo(trainCode);
-        List<TrainCarriage> carriageList = trainCarriageMapper.selectByExample(trainCarriageExample);
-        return carriageList;
+        trainCarriageExample.createCriteria().andTrainCodeEqualTo(trainCode);
+        return trainCarriageMapper.selectByExample(trainCarriageExample);
     }
 }

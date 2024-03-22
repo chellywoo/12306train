@@ -34,6 +34,8 @@ public class DailyTrainService {
     private TrainService trainService;
     @Resource
     private DailyTrainStationService dailyTrainStationService;
+    @Resource
+    private DailyTrainCarriageService dailyTrainCarriageService;
 
     public void save(DailyTrainSaveReq req) {
         DateTime now = new DateTime();
@@ -94,7 +96,7 @@ public class DailyTrainService {
     }
 
     private void generateDailyTrain(Date date, Train train) {
-        LOG.info("开始生成【{}】日车次【{}】信息", DateUtil.formatDate(date), train.getCode());
+        LOG.info("开始生成【{}】日车次【{}】数据", DateUtil.formatDate(date), train.getCode());
         // 删除现有车次
         DailyTrainExample dailyTrainExample = new DailyTrainExample();
         dailyTrainExample.createCriteria().andDateEqualTo(date).andCodeEqualTo(train.getCode());
@@ -109,6 +111,7 @@ public class DailyTrainService {
         dailyTrain.setDate(date);
         dailyTrainMapper.insert(dailyTrain);
         dailyTrainStationService.generateDaily(date, train.getCode());
-        LOG.info("生成【{}】日车次【{}】信息结束", DateUtil.formatDate(date), train.getCode());
+        dailyTrainCarriageService.generateDaily(date, train.getCode());
+        LOG.info("生成【{}】日车次【{}】数据结束", DateUtil.formatDate(date), train.getCode());
     }
 }
