@@ -43,6 +43,11 @@
             <user-outlined /> &nbsp; 每日车座
           </router-link>
         </a-menu-item>
+        <a-menu-item key="/business/daily-train-ticket">
+          <router-link to="/business/daily-train-ticket">
+            <user-outlined /> &nbsp; 余票管理
+          </router-link>
+        </a-menu-item>
       </a-sub-menu>
       <a-sub-menu key="base">
         <template #title>

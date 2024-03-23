@@ -43,6 +43,10 @@ const routes = [
                 path: 'daily-train-seat',
                 name: 'daily-train-seat',
                 component: () => import(/* webpackChunkName: "about" */ '../views/main/business/daily-train-seat.vue'),
+            },{
+                path: 'daily-train-ticket',
+                name: 'daily-train-ticket',
+                component: () => import(/* webpackChunkName: "about" */ '../views/main/business/daily-train-ticket.vue'),
             }]
         }, {
             path: 'base/',
