@@ -78,6 +78,9 @@
     <a-form-item label="日期">
       <a-date-picker v-model:value="genDaily.date" placeholder="请选择日期"/>
     </a-form-item>
+    <a-form-item label="车次编号">
+      <train-select-view v-model="genDaily.trainCode"/>
+    </a-form-item>
   </a-form>
 </a-modal>
 </template>
@@ -175,7 +178,8 @@ export default defineComponent({
     });
 
     const genDaily = ref({
-      date: null
+      date: null,
+      trainCode: null
     });
     const genDailyVisible = ref(false);
     const genDailyLoading = ref(false);
@@ -273,20 +277,38 @@ export default defineComponent({
     const handleGenDailyOk = () => {
       let date = dayjs(genDaily.value.date).format("YYYY-MM-DD");
       genDailyLoading.value = true;
-      axios.get("/business/admin/daily-train/generate-daily/" + date).then((response) => {
-        genDailyLoading.value = false;
-        let data = response.data;
-        if (data.success) {
-          notification.success({description: "生成成功！"});
-          genDailyVisible.value = false;
-          handleQuery({
-            page: pagination.value.current,
-            size: pagination.value.pageSize
-          });
-        } else {
-          notification.error({description: data.message});
-        }
-      });
+      if(genDaily.value.trainCode === null){
+        axios.get("/business/admin/daily-train/generate-daily/" + date).then((response) => {
+          genDailyLoading.value = false;
+          let data = response.data;
+          if (data.success) {
+            notification.success({description: "生成成功！"});
+            genDailyVisible.value = false;
+            handleQuery({
+              page: pagination.value.current,
+              size: pagination.value.pageSize
+            });
+          } else {
+            notification.error({description: data.message});
+          }
+        });
+      }else {
+        axios.get("/business/admin/daily-train/generate-once/" + date +"/"+ genDaily.value.trainCode).then((response) => {
+          genDailyLoading.value = false;
+          let data = response.data;
+          if (data.success) {
+            notification.success({description: "生成成功！"});
+            genDailyVisible.value = false;
+            handleQuery({
+              page: pagination.value.current,
+              size: pagination.value.pageSize
+            });
+          } else {
+            notification.error({description: data.message});
+          }
+        });
+      }
+
     };
 
     onMounted(() => {

@@ -47,7 +47,7 @@ public class TrainService {
         }
     }
 
-    private Train selectByUnique(String code) {
+    public Train selectByUnique(String code) {
         TrainExample trainExample = new TrainExample();
         TrainExample.Criteria criteria = trainExample.createCriteria();
         criteria.andCodeEqualTo(code);
