@@ -105,21 +105,6 @@ public class DailyTrainService {
         dailyTrainMapper.deleteByExample(dailyTrainExample);
 
         //增加车次数据
-        generateDailyData(date, train);
-    }
-    public void generateOnceTrain(Date date, String trainCode) {
-        LOG.info("开始生成【{}】日车次【{}】数据", DateUtil.formatDate(date), trainCode);
-        // 删除现有车次
-        DailyTrainExample dailyTrainExample = new DailyTrainExample();
-        dailyTrainExample.createCriteria().andDateEqualTo(date).andCodeEqualTo(trainCode);
-        dailyTrainMapper.deleteByExample(dailyTrainExample);
-
-        //增加车次数据
-        Train train = trainService.selectByUnique(trainCode);
-        generateDailyData(date, train);
-    }
-
-    private void generateDailyData(Date date, Train train) {
         DateTime now = new DateTime();
         DailyTrain dailyTrain = BeanUtil.copyProperties(train, DailyTrain.class);
         dailyTrain.setId(SnowUtil.getSnowFlakeNextId());
@@ -131,5 +116,10 @@ public class DailyTrainService {
         dailyTrainCarriageService.generateDaily(date, train.getCode());
         dailyTrainSeatService.generateDaily(date, train.getCode());
         LOG.info("生成【{}】日车次【{}】数据结束", DateUtil.formatDate(date), train.getCode());
+    }
+    public void generateOnceTrain(Date date, String trainCode) {
+        //增加车次数据
+        Train train = trainService.selectByUnique(trainCode);
+        generateDailyTrain(date, train);
     }
 }
