@@ -6,6 +6,7 @@
       <train-select-view v-model="params.code" width="200px"/>
       <a-button type="primary" @click="handleQuery()">查找</a-button>
       <a-button type="primary" @click="OnAdd"><plus-outlined />新增</a-button>
+      <a-button type="danger" @click="OnClickGenDaily">手动生成车次信息</a-button>
     </a-space>
   </p>
   <a-table :dataSource="dailyTrains"
@@ -71,12 +72,21 @@
       </a-form-item>
     </a-form>
   </a-modal>
+  <a-modal v-model:visible="genDailyVisible" title="生成车次" @ok="handleGenDailyOk"
+                     :confirm-loading="genDailyLoading" ok-text="确认" cancel-text="取消">
+  <a-form :model="genDaily" :label-col="{span: 4}" :wrapper-col="{ span: 20 }">
+    <a-form-item label="日期">
+      <a-date-picker v-model:value="genDaily.date" placeholder="请选择日期"/>
+    </a-form-item>
+  </a-form>
+</a-modal>
 </template>
 <script>
 import {defineComponent, onMounted, ref} from "vue";
 import axios from "axios";
 import {notification} from "ant-design-vue";
 import TrainSelectView from "@/components/train-select.vue";
+import dayjs from "dayjs";
 
 export default defineComponent({
   components: {TrainSelectView},
@@ -154,7 +164,7 @@ export default defineComponent({
     const pagination = ref({
       total: 0,
       current: 1,
-      pageSize: 6,
+      pageSize: 10,
     })
 
     let loading = ref(false);
@@ -163,6 +173,12 @@ export default defineComponent({
       code: null,
       date: null
     });
+
+    const genDaily = ref({
+      date: null
+    });
+    const genDailyVisible = ref(false);
+    const genDailyLoading = ref(false);
 
     const OnAdd = () => {
       dailyTrain.value = {};
@@ -233,11 +249,12 @@ export default defineComponent({
       })
     }
 
-    const handleTableChange = (clickPage) => {
+    const handleTableChange = (page) => {
       // console.log(pagination);
+      pagination.value.pageSize = page.pageSize;
       handleQuery({
-        page: clickPage.current,
-        size: clickPage.pageSize
+        page: page.current,
+        size: page.pageSize
       })
     }
 
@@ -248,6 +265,29 @@ export default defineComponent({
       // dailyTrain.value=t;
       dailyTrain.value = Object.assign(dailyTrain.value, t);
     }
+
+    const OnClickGenDaily = () => {
+      genDailyVisible.value = true;
+    };
+
+    const handleGenDailyOk = () => {
+      let date = dayjs(genDaily.value.date).format("YYYY-MM-DD");
+      genDailyLoading.value = true;
+      axios.get("/business/admin/daily-train/generate-daily/" + date).then((response) => {
+        genDailyLoading.value = false;
+        let data = response.data;
+        if (data.success) {
+          notification.success({description: "生成成功！"});
+          genDailyVisible.value = false;
+          handleQuery({
+            page: pagination.value.current,
+            size: pagination.value.pageSize
+          });
+        } else {
+          notification.error({description: data.message});
+        }
+      });
+    };
 
     onMounted(() => {
       handleQuery({
@@ -271,6 +311,11 @@ export default defineComponent({
       handleOk,
       OnChange,
       params,
+      genDaily,
+      genDailyVisible,
+      genDailyLoading,
+      OnClickGenDaily,
+      handleGenDailyOk
     };
   },
 });

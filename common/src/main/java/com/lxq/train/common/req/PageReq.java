@@ -1,13 +1,12 @@
 package com.lxq.train.common.req;
 
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 
 public class PageReq {
     @NotNull(message = "页码不能为空")
     private Integer page;
     @NotNull(message = "每页条数不能为空")
-    @Max(value = 15, message = "最大值不能超过15条")
+//    @Max(value = 15, message = "最大值不能超过15条")
     private Integer size;
 
     public Integer getSize() {

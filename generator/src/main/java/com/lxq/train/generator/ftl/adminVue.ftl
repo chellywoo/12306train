@@ -111,7 +111,7 @@ export default defineComponent({
     const pagination = ref({
       total: 0,
       current: 1,
-      pageSize: 6,
+      pageSize: 10,
     })
 
     let loading = ref(false);
@@ -141,6 +141,7 @@ export default defineComponent({
         }
       })
     }
+
     const handleOk = () => {
       axios.post("/${module}/admin/${do_main}/save", ${domain}.value).then((response) => {
         let data = response.data;
@@ -185,11 +186,12 @@ export default defineComponent({
       })
     }
 
-    const handleTableChange = (clickPage) => {
+    const handleTableChange = (page) => {
       // console.log(pagination);
+      pagination.value.pageSize = page.pageSize;
       handleQuery({
-        page: clickPage.current,
-        size: clickPage.pageSize
+        page: page.current,
+        size: page.pageSize
       })
     }
 
