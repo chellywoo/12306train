@@ -41,7 +41,7 @@
         <a-input v-model:value="dailyTrainStation.index"/>
       </a-form-item>
       <a-form-item label="站名">
-        <station-select-view v-model:value="dailyTrainStation.name" @change="OnChange"/>
+        <station-select-view v-model:value="dailyTrainStation.name"/>
       </a-form-item>
       <a-form-item label="站名拼音">
         <a-input v-model:value="dailyTrainStation.namePinyin" disabled/>
