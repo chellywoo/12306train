@@ -36,6 +36,8 @@ public class DailyTrainService {
     private DailyTrainStationService dailyTrainStationService;
     @Resource
     private DailyTrainCarriageService dailyTrainCarriageService;
+    @Resource
+    private DailyTrainSeatService dailyTrainSeatService;
 
     public void save(DailyTrainSaveReq req) {
         DateTime now = new DateTime();
@@ -112,6 +114,7 @@ public class DailyTrainService {
         dailyTrainMapper.insert(dailyTrain);
         dailyTrainStationService.generateDaily(date, train.getCode());
         dailyTrainCarriageService.generateDaily(date, train.getCode());
+        dailyTrainSeatService.generateDaily(date, train.getCode());
         LOG.info("生成【{}】日车次【{}】数据结束", DateUtil.formatDate(date), train.getCode());
     }
 }

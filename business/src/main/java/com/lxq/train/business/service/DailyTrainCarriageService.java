@@ -127,7 +127,5 @@ public class DailyTrainCarriageService {
             dailyTrainCarriageMapper.insert(dailyTrainCarriage);
         }
         LOG.info("生成【{}】日车次【{}】车厢数据结束", DateUtil.formatDate(date),trainCode);
-
-
     }
 }
