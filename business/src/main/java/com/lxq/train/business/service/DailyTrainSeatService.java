@@ -85,7 +85,7 @@ public class DailyTrainSeatService {
     public void generateDaily(Date date, String trainCode){
         LOG.info("开始生成【{}】日车次【{}】车座数据", DateUtil.formatDate(date),trainCode);
 
-        //删除某日某车次的车厢信息
+        //删除某日某车次的车座信息
         DailyTrainSeatExample dailyTrainSeatExample = new DailyTrainSeatExample();
         dailyTrainSeatExample.createCriteria().andDateEqualTo(date).andTrainCodeEqualTo(trainCode);
         dailyTrainSeatMapper.deleteByExample(dailyTrainSeatExample);
@@ -93,16 +93,16 @@ public class DailyTrainSeatService {
         List<TrainStation> stationList = trainStationService.selectByTrainCode(trainCode);
         String sell = StrUtil.fillBefore("",'0', stationList.size() - 1);
 
-        // 获取该车次的车厢数据
-        List<TrainSeat> carriageList = trainSeatService.selectByTrainCode(trainCode);
+        // 获取该车次的车座数据
+        List<TrainSeat> trainSeatList = trainSeatService.selectByTrainCode(trainCode);
 
-        if(CollUtil.isEmpty(carriageList)){
-            LOG.info("该车次没有车站基础数据，生成该车次的车座数据结束");
+        if(CollUtil.isEmpty(trainSeatList)){
+            LOG.info("该车次没有车座基础数据，生成该车次的车座数据结束");
             return;
         }
 
-        //增加数据到每日车站表中
-        for (TrainSeat trainSeat : carriageList) {
+        //增加数据到每日车座表中
+        for (TrainSeat trainSeat : trainSeatList) {
             DailyTrainSeat dailyTrainSeat = BeanUtil.copyProperties(trainSeat, DailyTrainSeat.class);
 
             DateTime now = new DateTime();

@@ -111,11 +111,11 @@ public class DailyTrainCarriageService {
         List<TrainCarriage> carriageList = trainCarriageService.selectByTrainCode(trainCode);
 
         if(CollUtil.isEmpty(carriageList)){
-            LOG.info("该车次没有车站基础数据，生成该车次的车厢数据结束");
+            LOG.info("该车次没有车厢基础数据，生成该车次的车厢数据结束");
             return;
         }
 
-        //增加数据到每日车站表中
+        //增加数据到每日车厢表中
         for (TrainCarriage trainCarriage : carriageList) {
             DailyTrainCarriage dailyTrainCarriage = BeanUtil.copyProperties(trainCarriage, DailyTrainCarriage.class);
 

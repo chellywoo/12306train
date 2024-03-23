@@ -103,7 +103,7 @@ export default defineComponent({
         key: 'trainCode',
       },
       {
-        title: '箱序',
+          title: '厢号',
         dataIndex: 'index',
         key: 'index',
       },

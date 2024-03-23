@@ -63,12 +63,12 @@ export default defineComponent({
         key: 'trainCode',
       },
       {
-        title: '厢序',
+        title: '厢号',
         dataIndex: 'carriageIndex',
         key: 'carriageIndex',
       },
       {
-        title: '排号',
+        title: '行号',
         dataIndex: 'row',
         key: 'row',
       },
