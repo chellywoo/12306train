@@ -3,7 +3,6 @@
   <p>
     <a-space style="width: 100%">
       <a-date-picker v-model:value="params.date" valueFormat="YYYY-MM-DD" placeholder="请选择日期" />
-      <train-select-view v-model="params.trainCode" width="200px"/>
       <station-select-view v-model:value="params.start" />
       <station-select-view v-model:value="params.end" />
       <a-button type="primary" @click="handleQuery()">查找</a-button>
@@ -77,12 +76,11 @@
 import {defineComponent, onMounted, ref} from "vue";
 import axios from "axios";
 import {notification} from "ant-design-vue";
-import TrainSelectView from "@/components/train-select.vue";
 import StationSelectView from "@/components/station-select.vue";
 import dayjs from "dayjs";
 
 export default defineComponent({
-  components: {StationSelectView, TrainSelectView},
+  components: {StationSelectView},
   setup() {
     const visible = ref(false);
     let dailyTrainTicket = ref({
@@ -225,11 +223,24 @@ export default defineComponent({
 
     const params = ref({
       date: null,
-      trainCode: null,
+      // trainCode: null,
       start: null,
       end: null
     });
     const handleQuery = (param) => {
+      if(Tool.isEmpty(params.value.date)){
+        notification.error({description: "请输入日期"});
+        return;
+      }
+      if(Tool.isEmpty(params.value.start)){
+        notification.error({description: "请输入始发站"});
+        return;
+      }
+      if(Tool.isEmpty(params.value.end)){
+        notification.error({description: "请输入终点站"});
+        return;
+      }
+
       if (!param) {
         param = {
           page: 1,
@@ -242,7 +253,7 @@ export default defineComponent({
               page: param.page,
               size: param.size,
               date: params.value.date,
-              trainCode: params.value.trainCode,
+              // trainCode: params.value.trainCode,
               start: params.value.start,
               end: params.value.end
             }
@@ -275,10 +286,10 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      handleQuery({
-        page: 1,
-        size: pagination.value.pageSize
-      });
+      // handleQuery({
+      //   page: 1,
+      //   size: pagination.value.pageSize
+      // });
     });
     return {
       pagination,
