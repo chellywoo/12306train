@@ -15,6 +15,7 @@
            :loading="loading">
     <template #bodyCell="{ column, record }">
       <template v-if="column.key === 'operation'">
+        <a-button style="color: blue" @click="toOrder(record)"><ShoppingCartOutlined />购票</a-button>
       </template>
       <template v-else-if="column.dataIndex === 'station'">
         {{record.start}}<br/>
@@ -78,6 +79,7 @@ import axios from "axios";
 import {notification} from "ant-design-vue";
 import StationSelectView from "@/components/station-select.vue";
 import dayjs from "dayjs";
+import router from "@/router";
 
 export default defineComponent({
   components: {StationSelectView},
@@ -212,6 +214,11 @@ export default defineComponent({
       //   dataIndex: 'ywPrice',
       //   key: 'ywPrice',
       // },
+      {
+        title: '操作',
+        dataIndex: 'operation',
+        key: 'operation',
+      },
     ];
     const pagination = ref({
       total: 0,
@@ -285,6 +292,12 @@ export default defineComponent({
       return dayjs('00:00:00', 'HH:mm:ss').second(diff).format('HH:mm:ss');
     };
 
+    const toOrder = (record) => {
+      dailyTrainTicket.value = Tool.copy(record);
+      SessionStorage.set("dailyTrainTicket", dailyTrainTicket.value);
+      router.push("/order");
+    }
+
     onMounted(() => {
       // handleQuery({
       //   page: 1,
@@ -301,7 +314,8 @@ export default defineComponent({
       handleQuery,
       handleTableChange,
       params,
-      calDuration
+      calDuration,
+      toOrder
     };
   },
 });
