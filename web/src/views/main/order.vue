@@ -25,6 +25,32 @@
   选中的乘客:{{ passengerChecks }}
   <br/>
   购票列表:{{ tickets }}
+  <div class="order-tickets">
+    <a-row class="order-tickets-header" v-if="tickets.length > 0">
+      <a-col :span="2">乘客</a-col>
+      <a-col :span="6">身份证</a-col>
+      <a-col :span="4">票种</a-col>
+      <a-col :span="4">座位类型</a-col>
+    </a-row>
+    <a-row class="order-tickets-row" v-for="ticket in tickets" :key="ticket.passengerId">
+      <a-col :span="2">{{ ticket.passengerName }}</a-col>
+      <a-col :span="6">{{ ticket.passengerIdCard }}</a-col>
+      <a-col :span="4">
+        <a-select v-model:value="ticket.passengerType" style="width: 100%">
+          <a-select-option v-for="item in PASSENGER_TYPE" :key="item.code" :value="item.code">
+            {{ item.desc }}
+          </a-select-option>
+        </a-select>
+      </a-col>
+      <a-col :span="4">
+        <a-select v-model:value="ticket.seatTypeCode" style="width: 100%">
+          <a-select-option v-for="item in seatTypes" :key="item.code" :value="item.code">
+            {{ item.desc }}
+          </a-select-option>
+        </a-select>
+      </a-col>
+    </a-row>
+  </div>
 </template>
 <script>
 import {defineComponent, onMounted, ref, watch} from "vue";
@@ -38,6 +64,7 @@ export default defineComponent({
     const passengerChecks = ref([]);
     const tickets = ref([]);
     const seatTypes = [];
+    const PASSENGER_TYPE = window.PASSENGER_TYPE;
 
     const dailyTrainTicket = SessionStorage.get(SESSION_ORDER) || {}; // 防止空指针异常
     console.log("下单的车次信息：", dailyTrainTicket);
@@ -107,7 +134,8 @@ export default defineComponent({
       handlePassenger,
       passengerOptions,
       passengerChecks,
-      tickets
+      tickets,
+      PASSENGER_TYPE
     };
   },
 });
@@ -130,5 +158,24 @@ export default defineComponent({
 .order-train .order-train-ticket .order-train-ticket-main {
   color: crimson;
   font-size: 18px;
+}
+.order-tickets {
+  margin: 10px 0;
+}
+.order-tickets .ant-col {
+  padding: 5px 10px;
+}
+.order-tickets .order-tickets-header {
+  background-color: #9bbdf6;
+  border: solid 1px #9bbdf6;
+  color: darkblue;
+  font-size: 16px;
+  padding: 5px 0;
+}
+.order-tickets .order-tickets-row {
+  border: solid 1px cornflowerblue;
+  border-top: none;
+  vertical-align: middle;
+  line-height: 30px;
 }
 </style>
