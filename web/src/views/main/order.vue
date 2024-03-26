@@ -23,9 +23,11 @@
   <a-checkbox-group v-model:value="passengerChecks" :options="passengerOptions"/>
   <br/>
   选中的乘客:{{ passengerChecks }}
+  <br/>
+  购票列表:{{ tickets }}
 </template>
 <script>
-import {defineComponent, onMounted, ref} from "vue";
+import {defineComponent, onMounted, ref, watch} from "vue";
 import axios from "axios";
 import {notification} from "ant-design-vue";
 
@@ -34,6 +36,8 @@ export default defineComponent({
     const passengers = ref([]);
     const passengerOptions = ref([]);
     const passengerChecks = ref([]);
+    const tickets = ref([]);
+    const seatTypes = [];
 
     const dailyTrainTicket = SessionStorage.get(SESSION_ORDER) || {}; // 防止空指针异常
     console.log("下单的车次信息：", dailyTrainTicket);
@@ -41,7 +45,6 @@ export default defineComponent({
     const SEAT_TYPE = window.SEAT_TYPE_ARRAY;
     console.log("车座类型", SEAT_TYPE);
 
-    const seatTypes = [];
     for (let KEY in SEAT_TYPE) {
       let key = KEY.toLowerCase();
       if (dailyTrainTicket[key] >= 0) {
@@ -56,6 +59,28 @@ export default defineComponent({
     }
     console.log("本车提供的车次类型：", seatTypes);
 
+    // 购票列表，用于界面展示，并传递到后端接口，用来描述：哪个乘客购买什么座位的票
+    // {
+    //   passengerId: 123,
+    //   passengerType: "1",
+    //   passengerName: "张三",
+    //   passengerIdCard: "12323132132",
+    //   seatTypeCode: "1",
+    //   seat: "C1"
+    // }
+    // 勾选或去掉某个乘客时，在购票列表中加上或去掉一张表
+    watch(() => passengerChecks.value, (newVal, oldVal) => {
+      console.log("勾选乘客时发生变化", newVal, oldVal);
+      tickets.value = [];
+      passengerChecks.value.forEach((item) => tickets.value.push({
+        passengerId: item.id,
+        passengerType: item.type,
+        seatTypeCode: seatTypes[0].code,
+        passengerName: item.name,
+        passengerIdCard: item.idCard
+
+      }))
+    },{immediate: true});
     const handlePassenger = () => {
       axios.get("/member/passenger/query-mine").then((response) => {
         let data = response.data;
@@ -63,7 +88,7 @@ export default defineComponent({
           passengers.value = data.content;
           passengers.value.forEach((item) => passengerOptions.value.push({
             label: item.name,
-            value: item.id
+            value: item
           }))
         } else {
           notification.error({description: data.message});
@@ -71,7 +96,7 @@ export default defineComponent({
       })
     };
 
-    onMounted(() =>{
+    onMounted(() => {
       handlePassenger();
     })
 
@@ -81,7 +106,8 @@ export default defineComponent({
       passengers,
       handlePassenger,
       passengerOptions,
-      passengerChecks
+      passengerChecks,
+      tickets
     };
   },
 });
@@ -91,6 +117,7 @@ export default defineComponent({
 #app {
   text-align: left;
 }
+
 .order-train .order-train-main {
   font-size: 18px;
   font-weight: bold;
