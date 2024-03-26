@@ -18,9 +18,14 @@
     </span>
     </div>
   </div>
+  <div>
+    {{ passengers }}
+  </div>
 </template>
 <script>
-import {defineComponent} from "vue";
+import {defineComponent, onMounted, ref} from "vue";
+import axios from "axios";
+import {notification} from "ant-design-vue";
 
 export default defineComponent({
   setup() {
@@ -45,9 +50,27 @@ export default defineComponent({
     }
     console.log("本车提供的车次类型：", seatTypes);
 
+    const passengers = ref([]);
+    const handlePassenger = () => {
+      axios.get("/member/passenger/query-mine").then((response) => {
+        let data = response.data;
+        if (data.success) {
+          passengers.value = data.content;
+        } else {
+          notification.error({description: data.message});
+        }
+      })
+    };
+
+    onMounted(() =>{
+      handlePassenger();
+    })
+
     return {
       dailyTrainTicket,
-      seatTypes
+      seatTypes,
+      passengers,
+      handlePassenger
     };
   },
 });
