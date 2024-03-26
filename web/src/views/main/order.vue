@@ -6,7 +6,7 @@ import {defineComponent} from "vue";
 
 export default defineComponent({
   setup() {
-    const dailyTrainTicket = SessionStorage.get("dailyTrainTicket") || {}; // 防止空指针异常
+    const dailyTrainTicket = SessionStorage.get(SESSION_ORDER) || {}; // 防止空指针异常
     console.log("下单的车次信息：",dailyTrainTicket);
     return {
       dailyTrainTicket

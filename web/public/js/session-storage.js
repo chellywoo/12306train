@@ -1,3 +1,7 @@
+// 所有的session key在这里定义，避免多功能使用时重复
+SESSION_ORDER="SESSION_ORDER";
+SESSION_TICKET_PARAMS="SESSION_TICKET_PARAMS";
+
 SessionStorage = {
     get: function (key) {
         var v = sessionStorage.getItem(key);
