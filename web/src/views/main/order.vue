@@ -18,9 +18,11 @@
     </span>
     </div>
   </div>
-  <div>
-    {{ passengers }}
-  </div>
+  <a-divider/>
+  <b>选择乘客</b>
+  <a-checkbox-group v-model:value="passengerChecks" :options="passengerOptions"/>
+  <br/>
+  选中的乘客:{{ passengerChecks }}
 </template>
 <script>
 import {defineComponent, onMounted, ref} from "vue";
@@ -29,6 +31,10 @@ import {notification} from "ant-design-vue";
 
 export default defineComponent({
   setup() {
+    const passengers = ref([]);
+    const passengerOptions = ref([]);
+    const passengerChecks = ref([]);
+
     const dailyTrainTicket = SessionStorage.get(SESSION_ORDER) || {}; // 防止空指针异常
     console.log("下单的车次信息：", dailyTrainTicket);
 
@@ -50,12 +56,15 @@ export default defineComponent({
     }
     console.log("本车提供的车次类型：", seatTypes);
 
-    const passengers = ref([]);
     const handlePassenger = () => {
       axios.get("/member/passenger/query-mine").then((response) => {
         let data = response.data;
         if (data.success) {
           passengers.value = data.content;
+          passengers.value.forEach((item) => passengerOptions.value.push({
+            label: item.name,
+            value: item.id
+          }))
         } else {
           notification.error({description: data.message});
         }
@@ -70,13 +79,18 @@ export default defineComponent({
       dailyTrainTicket,
       seatTypes,
       passengers,
-      handlePassenger
+      handlePassenger,
+      passengerOptions,
+      passengerChecks
     };
   },
 });
 </script>
 
 <style>
+#app {
+  text-align: left;
+}
 .order-train .order-train-main {
   font-size: 18px;
   font-weight: bold;
