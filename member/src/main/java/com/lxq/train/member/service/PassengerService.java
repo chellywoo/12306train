@@ -6,6 +6,8 @@ import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lxq.train.common.context.LoginMemberContext;
+import com.lxq.train.common.exception.BusinessException;
+import com.lxq.train.common.exception.BusinessExceptionEnum;
 import com.lxq.train.common.resp.PageResp;
 import com.lxq.train.common.util.SnowUtil;
 import com.lxq.train.member.domain.Passenger;
@@ -28,9 +30,15 @@ public class PassengerService {
 
     @Resource
     private PassengerMapper passengerMapper;
-    public void save(PassengerSaveReq passengerSaveReq){
+    public void save(PassengerSaveReq req){
+        PassengerExample passengerExample = new PassengerExample();
+        passengerExample.createCriteria().andMemberIdEqualTo(LoginMemberContext.getId());
+        long l = passengerMapper.countByExample(passengerExample);
+        if( l + 1 > 10) {
+            throw new BusinessException(BusinessExceptionEnum.MEMBER_PASSENGER_MAX);
+        }
         DateTime now = new DateTime();
-        Passenger passenger = BeanUtil.copyProperties(passengerSaveReq, Passenger.class);
+        Passenger passenger = BeanUtil.copyProperties(req, Passenger.class);
         if (ObjectUtil.isNull(passenger.getId())) {
             passenger.setMemberId(LoginMemberContext.getId());
             passenger.setId(SnowUtil.getSnowFlakeNextId());

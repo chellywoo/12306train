@@ -4,6 +4,7 @@ public enum BusinessExceptionEnum {
     MEMBER_MOBILE_ALREADY_EXIST("手机号已注册"),
     MEMBER_MOBILE_NOT_EXIST("请先获取验证码"),
     MEMBER_CODE_ERROR("验证码错误"),
+    MEMBER_PASSENGER_MAX("添加的乘客数已到限定值"),
     BUSINESS_STATION_NAME_UNIQUE_ERROR("车站已存在"),
     BUSINESS_TRAIN_CODE_UNIQUE_ERROR("车次已存在"),
     BUSINESS_TRAIN_STATION_INDEX_UNIQUE_ERROR("该车次站序已存在"),
