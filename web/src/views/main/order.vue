@@ -19,7 +19,7 @@
     </div>
   </div>
   <a-divider/>
-  <b>选择乘客</b>
+  <b>选择乘客: </b>
   <a-checkbox-group v-model:value="passengerChecks" :options="passengerOptions"/>
   <br/>
   选中的乘客:{{ passengerChecks }}
@@ -81,13 +81,29 @@
           </span>
         </a-col>
       </a-row>
+      <br/>
+      是否支持选座：{{ chooseSeatType }}
+      <br/>
+      选座初始化：{{ chooseSeatObj }}
+      <br/>
+      所选座位类型：{{ SEAT_COL }}
+      <div v-if="chooseSeatType === 0" style="color: red;">
+        您购买的车票不支持选座
+        <div>12306规则：只有全部是一等座或全部是二等座才支持选座</div>
+        <div>12306规则：余票小于一定数量时，不允许选座（本项目以20为例）</div>
+      </div>
+      <div v-else style="text-align: center">
+        <a-switch class="choose-seat-item" v-for="item in SEAT_COL" :key="item.code"
+                  v-model:checked="chooseSeatObj[item.code + '1']" :checked-children="item.desc"
+                  :un-checked-children="item.desc"/>
+        <div v-if="tickets.length > 1">
+          <a-switch class="choose-seat-item" v-for="item in SEAT_COL" :key="item.code"
+                    v-model:checked="chooseSeatObj[item.code + '2']" :checked-children="item.desc"
+                    :un-checked-children="item.desc"/>
+        </div>
+        <div style="color: #999999">提示：您可以选择{{ tickets.length }}个座位</div>
+      </div>
     </div>
-    <br/>
-    是否支持选座：{{ chooseSeatType }}
-    <br/>
-    选座初始化：{{ chooseSeatObj }}
-    <br/>
-    所选座位类型：{{ SEAT_COL }}
   </a-modal>
 </template>
 <script>
@@ -297,5 +313,8 @@ export default defineComponent({
   border-top: none;
   vertical-align: middle;
   line-height: 30px;
+}
+.order-tickets .choose-seat-item {
+  margin: 5px 5px;
 }
 </style>
