@@ -11,7 +11,7 @@ import com.lxq.train.business.domain.ConformOrder;
 import com.lxq.train.business.domain.ConformOrderExample;
 import com.lxq.train.business.mapper.ConformOrderMapper;
 import com.lxq.train.business.req.ConformOrderQueryReq;
-import com.lxq.train.business.req.ConformOrderSaveReq;
+import com.lxq.train.business.req.ConformOrderAcceptReq;
 import com.lxq.train.business.resp.ConformOrderQueryResp;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ public class ConformOrderService {
 
     @Resource
     private ConformOrderMapper conformOrderMapper;
-    public void save(ConformOrderSaveReq req){
+    public void save(ConformOrderAcceptReq req){
         DateTime now = new DateTime();
         ConformOrder conformOrder = BeanUtil.copyProperties(req, ConformOrder.class);
         if (ObjectUtil.isNull(conformOrder.getId())) {
@@ -64,5 +64,9 @@ public class ConformOrderService {
 
     public void delete(Long id ){
         conformOrderMapper.deleteByPrimaryKey(id);
+    }
+
+    public void doConfirm(ConformOrderAcceptReq req){
+
     }
 }

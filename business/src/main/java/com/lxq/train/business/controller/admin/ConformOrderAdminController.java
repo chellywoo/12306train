@@ -3,7 +3,7 @@ package com.lxq.train.business.controller.admin;
 import com.lxq.train.common.resp.CommonResp;
 import com.lxq.train.common.resp.PageResp;
 import com.lxq.train.business.req.ConformOrderQueryReq;
-import com.lxq.train.business.req.ConformOrderSaveReq;
+import com.lxq.train.business.req.ConformOrderAcceptReq;
 import com.lxq.train.business.resp.ConformOrderQueryResp;
 import com.lxq.train.business.service.ConformOrderService;
 import jakarta.annotation.Resource;
@@ -16,7 +16,7 @@ public class ConformOrderAdminController {
     @Resource
     private ConformOrderService conformOrderService;
     @PostMapping("/save")
-    public CommonResp<Object> save(@Valid @RequestBody ConformOrderSaveReq req){
+    public CommonResp<Object> save(@Valid @RequestBody ConformOrderAcceptReq req){
         conformOrderService.save(req);
         return new CommonResp<>();
     }
