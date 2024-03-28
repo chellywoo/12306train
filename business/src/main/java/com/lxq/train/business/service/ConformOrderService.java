@@ -3,8 +3,11 @@ package com.lxq.train.business.service;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.lxq.train.business.enums.ConfirmOrderStatusEnum;
+import com.lxq.train.common.context.LoginMemberContext;
 import com.lxq.train.common.resp.PageResp;
 import com.lxq.train.common.util.SnowUtil;
 import com.lxq.train.business.domain.ConformOrder;
@@ -71,6 +74,20 @@ public class ConformOrderService {
         // 做这个的目的是为了防止有人直接调用后端接口
 
         // 保存数据确认订单表，状态初始化
+        DateTime now = new DateTime();
+        ConformOrder order = new ConformOrder();
+        order.setId(SnowUtil.getSnowFlakeNextId());
+        order.setMemberId(LoginMemberContext.getId());
+        order.setDate(now);
+        order.setTrainCode(req.getTrainCode());
+        order.setStart(req.getStart());
+        order.setEnd(req.getEnd());
+        order.setDailyTrainTicketId(req.getDailyTrainTicketId());
+        order.setStatus(ConfirmOrderStatusEnum.INIT.getCode());
+        order.setCreateTime(now);
+        order.setUpdateTime(now);
+        order.setTickets(JSON.toJSONString(req.getTickets()));
+        conformOrderMapper.insert(order);
 
         // 查出余票记录，得到真实的余票信息
 
