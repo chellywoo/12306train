@@ -162,6 +162,22 @@ export default defineComponent({
         notification.error({description:"最多只能购买五张票"});
         return;
       }
+      // 校验余票是否充足，购票中的每个座位类型，都去车次余票列表中查看余票是否充足
+      let seatTypeTemp = Tool.copy(seatTypes);
+      for (let i = 0; i < tickets.value.length; i++) {
+        let ticket = tickets.value[i];
+        for(let j = 0; j < seatTypeTemp.length; j++){
+          let seatType = seatTypeTemp[j];
+          if(ticket.seatTypeCode === seatType.code){
+            seatType.count--;
+            if(seatType.count < 0 ) {
+              notification.error({description: seatType.desc + "余票不足"});
+              return;
+            }
+          }
+        }
+      }
+      console.log("前端余票校验通过");
       visible.value = true;
     }
 
