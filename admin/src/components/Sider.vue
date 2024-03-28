@@ -23,6 +23,16 @@
             业务管理
           </span>
         </template>
+        <a-menu-item key="/business/confirm-order">
+          <router-link to="/business/confirm-order">
+            <user-outlined /> &nbsp; 订单管理
+          </router-link>
+        </a-menu-item>
+        <a-menu-item key="/business/daily-train-ticket">
+          <router-link to="/business/daily-train-ticket">
+            <user-outlined /> &nbsp; 余票管理
+          </router-link>
+        </a-menu-item>
         <a-menu-item key="/business/daily-train">
           <router-link to="/business/daily-train">
             <car-outlined /> &nbsp; 每日车次
@@ -41,11 +51,6 @@
         <a-menu-item key="/business/daily-train-seat">
           <router-link to="/business/daily-train-seat">
             <user-outlined /> &nbsp; 每日车座
-          </router-link>
-        </a-menu-item>
-        <a-menu-item key="/business/daily-train-ticket">
-          <router-link to="/business/daily-train-ticket">
-            <user-outlined /> &nbsp; 余票管理
           </router-link>
         </a-menu-item>
       </a-sub-menu>
