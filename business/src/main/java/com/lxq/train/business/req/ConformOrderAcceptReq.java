@@ -10,12 +10,6 @@ import java.util.List;
 public class ConformOrderAcceptReq {
 
     /**
-     * 用户id
-     */
-    @NotNull(message = "用户id不能为空")
-    private Long memberId;
-
-    /**
      * 日期
      */
     @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
@@ -49,16 +43,8 @@ public class ConformOrderAcceptReq {
     /**
      * 车票
      */
-    @NotBlank(message = "车票不能为空")
+    @NotNull(message = "车票不能为空")
     private List<ConfirmOrderTicketReq> tickets;
-
-    public Long getMemberId() {
-        return memberId;
-    }
-
-    public void setMemberId(Long memberId) {
-        this.memberId = memberId;
-    }
 
     public Date getDate() {
         return date;
@@ -111,8 +97,7 @@ public class ConformOrderAcceptReq {
     @Override
     public String toString() {
         return "ConformOrderAcceptReq{" +
-                "memberId=" + memberId +
-                ", date=" + date +
+                "date=" + date +
                 ", trainCode='" + trainCode + '\'' +
                 ", start='" + start + '\'' +
                 ", end='" + end + '\'' +

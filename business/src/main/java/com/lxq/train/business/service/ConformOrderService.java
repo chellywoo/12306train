@@ -6,21 +6,23 @@ import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.lxq.train.business.domain.ConformOrder;
+import com.lxq.train.business.domain.ConformOrderExample;
+import com.lxq.train.business.domain.DailyTrainTicket;
 import com.lxq.train.business.enums.ConfirmOrderStatusEnum;
+import com.lxq.train.business.mapper.ConformOrderMapper;
+import com.lxq.train.business.req.ConformOrderAcceptReq;
+import com.lxq.train.business.req.ConformOrderQueryReq;
+import com.lxq.train.business.resp.ConformOrderQueryResp;
 import com.lxq.train.common.context.LoginMemberContext;
 import com.lxq.train.common.resp.PageResp;
 import com.lxq.train.common.util.SnowUtil;
-import com.lxq.train.business.domain.ConformOrder;
-import com.lxq.train.business.domain.ConformOrderExample;
-import com.lxq.train.business.mapper.ConformOrderMapper;
-import com.lxq.train.business.req.ConformOrderQueryReq;
-import com.lxq.train.business.req.ConformOrderAcceptReq;
-import com.lxq.train.business.resp.ConformOrderQueryResp;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -30,6 +32,8 @@ public class ConformOrderService {
 
     @Resource
     private ConformOrderMapper conformOrderMapper;
+    @Resource
+    private DailyTrainTicketService dailyTrainTicketService;
     public void save(ConformOrderAcceptReq req){
         DateTime now = new DateTime();
         ConformOrder conformOrder = BeanUtil.copyProperties(req, ConformOrder.class);
@@ -74,14 +78,19 @@ public class ConformOrderService {
         // 做这个的目的是为了防止有人直接调用后端接口
 
         // 保存数据确认订单表，状态初始化
+        Date date = req.getDate();
+        String trainCode = req.getTrainCode();
+        String start = req.getStart();
+        String end = req.getEnd();
+
         DateTime now = new DateTime();
         ConformOrder order = new ConformOrder();
         order.setId(SnowUtil.getSnowFlakeNextId());
         order.setMemberId(LoginMemberContext.getId());
-        order.setDate(now);
-        order.setTrainCode(req.getTrainCode());
-        order.setStart(req.getStart());
-        order.setEnd(req.getEnd());
+        order.setDate(date);
+        order.setTrainCode(trainCode);
+        order.setStart(start);
+        order.setEnd(end);
         order.setDailyTrainTicketId(req.getDailyTrainTicketId());
         order.setStatus(ConfirmOrderStatusEnum.INIT.getCode());
         order.setCreateTime(now);
@@ -90,6 +99,8 @@ public class ConformOrderService {
         conformOrderMapper.insert(order);
 
         // 查出余票记录，得到真实的余票信息
+        DailyTrainTicket dailyTrainTicket = dailyTrainTicketService.selectByUnique(date, trainCode, start, end);
+        LOG.info("查出余票记录：{}", dailyTrainTicket);
 
         // 预扣减余票数据，并判断余票是否充足
 
