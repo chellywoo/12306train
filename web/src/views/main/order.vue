@@ -251,6 +251,20 @@ export default defineComponent({
         }
       }
 
+      // 查询余票是否大于20，若小于20就不允许选座
+      if(chooseSeatType.value !== 0){
+        for(let i = 0; i < seatTypes.length; i++){
+          let seatType = seatTypes[i];
+          if(seatType.code === ticketSeatTypeCodesSet[0]){
+            if(seatType.count < 20){
+              console.log("余票不足20，无法选座");
+              chooseSeatType.value = 0;
+              break;
+            }
+          }
+        }
+      }
+
       visible.value = true;
     }
 
