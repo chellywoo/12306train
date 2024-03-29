@@ -8,9 +8,7 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.lxq.train.business.domain.ConformOrder;
-import com.lxq.train.business.domain.ConformOrderExample;
-import com.lxq.train.business.domain.DailyTrainTicket;
+import com.lxq.train.business.domain.*;
 import com.lxq.train.business.enums.ConfirmOrderStatusEnum;
 import com.lxq.train.business.enums.SeatColEnum;
 import com.lxq.train.business.enums.SeatTypeEnum;
@@ -42,6 +40,10 @@ public class ConformOrderService {
     private ConformOrderMapper conformOrderMapper;
     @Resource
     private DailyTrainTicketService dailyTrainTicketService;
+    @Resource
+    private DailyTrainCarriageService dailyTrainCarriageService;
+    @Resource
+    private DailyTrainSeatService dailyTrainSeatService;
     public void save(ConformOrderAcceptReq req){
         DateTime now = new DateTime();
         ConformOrder conformOrder = BeanUtil.copyProperties(req, ConformOrder.class);
@@ -120,6 +122,10 @@ public class ConformOrderService {
         ConfirmOrderTicketReq ticket1 = tickets.get(0);
         if (StrUtil.isBlank(ticket1.getSeat())) {
             LOG.info("本次购票未选座");
+            for (ConfirmOrderTicketReq ticket : tickets) {
+                getSeat(date, trainCode, ticket.getSeatTypeCode(), null, null);
+            }
+            LOG.info("未选座开始购票");
         } else {
             LOG.info("本次购票存在选座");
             // 查出本次选座的座位类型有哪些列，用于计算所选座位与第一个座位的偏移值，与预减库存时的方法类似
@@ -152,6 +158,8 @@ public class ConformOrderService {
             }
             LOG.info("计算得到所有座位的相对偏移值：{}", offsetList);
 
+            getSeat(date, trainCode, ticket1.getSeatTypeCode(), ticket1.getSeat().substring(0, 1), offsetList);
+
         }
 
         // 选座
@@ -164,6 +172,20 @@ public class ConformOrderService {
             // 余票详情修改余票
             // 为用户增加购票记录
             // 更新确认订单表状态为成功
+    }
+
+    private void getSeat(Date date, String trainCode, String seatType, String col, List<Integer> offsetList){
+        List<DailyTrainCarriage> carriageList = dailyTrainCarriageService.selectBySeatType(date, trainCode, seatType);
+        LOG.info("共查出{}个符合条件的车厢", carriageList.size());
+
+        // 一个车厢一个车厢的获取座位数据
+        for (DailyTrainCarriage carriage : carriageList) {
+            LOG.info("开始从第{}车厢开始选座", carriage.getIndex());
+            List<DailyTrainSeat> seatList = dailyTrainSeatService.selectByCarriage(date, trainCode, carriage.getIndex());
+            LOG.info("第{}车厢的座位数：{}", carriage.getIndex(), seatList.size());
+
+        }
+
     }
 
     private static void PreReduceTickets(List<ConfirmOrderTicketReq> tickets, DailyTrainTicket dailyTrainTicket) {

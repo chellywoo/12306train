@@ -128,4 +128,10 @@ public class DailyTrainCarriageService {
         }
         LOG.info("生成【{}】日车次【{}】车厢数据结束", DateUtil.formatDate(date),trainCode);
     }
+
+    public List<DailyTrainCarriage> selectBySeatType(Date date, String trainCode, String seatType) {
+        DailyTrainCarriageExample dailyTrainCarriageExample = new DailyTrainCarriageExample();
+        dailyTrainCarriageExample.createCriteria().andDateEqualTo(date).andTrainCodeEqualTo(trainCode).andSeatTypeEqualTo(seatType);
+        return dailyTrainCarriageMapper.selectByExample(dailyTrainCarriageExample);
+    }
 }
