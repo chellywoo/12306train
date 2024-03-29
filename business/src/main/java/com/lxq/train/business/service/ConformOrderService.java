@@ -1,6 +1,7 @@
 package com.lxq.train.business.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.NumberUtil;
@@ -194,16 +195,59 @@ public class ConformOrderService {
             LOG.info("第{}车厢的座位数：{}", carriage.getIndex(), seatList.size());
 
             // 开始挑选座位
-            for (DailyTrainSeat dailyTrainSeat : seatList) {
+            for (int i = 0; i < seatList.size(); i++) {
+                DailyTrainSeat dailyTrainSeat = seatList.get(i);
+                // 判断col值，如果有值的话需要比对列号
+                Integer seatIndex = dailyTrainSeat.getCarriageSeatIndex();
+                String column = dailyTrainSeat.getCol();
+                if (StrUtil.isBlank(col)) {
+                    LOG.info("未选座");
+                } else {
+                    if (!column.equals(col)) {
+                        LOG.info("座位{}列值不对，继续判断下一个座位，当前列值{}，目标列值：{}", seatIndex, column, col);
+                        continue;
+                    }
+                }
+
                 // 判断座位是否可售
                 boolean isSell = isSell(dailyTrainSeat, startIndex, endIndex);
                 if (isSell) {
                     LOG.info("选中座位");
-                    return;
+//                    return;
                 } else {
                     LOG.info("未选中座位");
                     continue;
                 }
+
+                // 判断offset列表，如果有值的话需要根据第一个座位获取座位
+                boolean isGetAllOffsetSeat = true;
+                if (CollUtil.isNotEmpty(offsetList)) {
+                    LOG.info("有偏移值:{}，校验座位是否可以被选", offsetList);
+                    // 从索引1开始，索引0就是当前选中的票
+                    for (int j = 1; j < offsetList.size(); j++) {
+                        Integer offset = offsetList.get(j);
+                        int nextIndex = i + offset;
+                        //选座时，一定要在一个车厢
+                        if (nextIndex > seatList.size()) {
+                            LOG.info("座位{}不可选，偏移后的索引超出了车厢的座位数", nextIndex);
+                            isGetAllOffsetSeat = false;
+                            break;
+                        }
+
+                        DailyTrainSeat nextDailyTrainSeat = seatList.get(nextIndex);
+                        boolean isSellNext = isSell(nextDailyTrainSeat, startIndex, endIndex);
+                        if (isSellNext) {
+                            LOG.info("座位{}被选中", nextDailyTrainSeat.getCarriageSeatIndex());
+                        } else {
+                            LOG.info("座位{}不可选", nextDailyTrainSeat.getCarriageSeatIndex());
+                            isGetAllOffsetSeat = false;
+                            break;
+                        }
+                    }
+                }
+                if (!isGetAllOffsetSeat)
+                    continue;
+                return;
             }
         }
 
@@ -228,7 +272,7 @@ public class ConformOrderService {
         } else {
             LOG.info("座位{}在本次车站区间{}~{}未售票，选中该座位", dailyTrainSeat.getCarriageSeatIndex(), startIndex, endIndex);
             curSell = curSell.replace('0', '1');// 11
-            curSell = StrUtil.fillBefore(curSell, '0', endIndex); // 最后一位代表补完数据之后为几位 // 011
+            curSell = StrUtil.fillBefore(curSell, '0', endIndex - 1); // 最后一位代表补完数据之后为几位 // 011
             curSell = StrUtil.fillAfter(curSell, '0', sell.length()); // 0110
             // 这里存在一个问题，如果curSell的值为01110，原始的为00001，那么相加为01111，但是转为int之后，自动设别为15
             // 但是再次转换为二进制之后，他只会生成4位的1111，不会按原始的位数生成
