@@ -46,6 +46,8 @@ public class ConfirmOrderService {
     private DailyTrainCarriageService dailyTrainCarriageService;
     @Resource
     private DailyTrainSeatService dailyTrainSeatService;
+    @Resource
+    private AfterConfirmOrderService afterConfirmOrderService;
     public void save(ConfirmOrderAcceptReq req){
         DateTime now = new DateTime();
         ConfirmOrder confirmOrder = BeanUtil.copyProperties(req, ConfirmOrder.class);
@@ -170,16 +172,8 @@ public class ConfirmOrderService {
         // 最终选座
         LOG.info("最终选座:{}", finalSeatList);
 
-        // 选座
-            // 一个车厢一个车厢的获取座位数据
-
-            // 挑选符合条件的座位，如果这个车厢不满足，则进入下个车厢，不允许一个订单中存在不同车厢的座位
-
         // 选中座位后事务处理
-            // 座位表修改售卖情况：sell
-            // 余票详情修改余票
-            // 为用户增加购票记录
-            // 更新确认订单表状态为成功
+        afterConfirmOrderService.afterDoConfirm(finalSeatList);
     }
 
     /**
