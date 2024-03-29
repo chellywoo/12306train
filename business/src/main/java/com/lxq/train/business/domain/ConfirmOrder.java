@@ -2,7 +2,7 @@ package com.lxq.train.business.domain;
 
 import java.util.Date;
 
-public class ConformOrder {
+public class ConfirmOrder {
     private Long id;
 
     private Long memberId;

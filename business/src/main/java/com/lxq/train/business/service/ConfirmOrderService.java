@@ -14,11 +14,11 @@ import com.lxq.train.business.domain.*;
 import com.lxq.train.business.enums.ConfirmOrderStatusEnum;
 import com.lxq.train.business.enums.SeatColEnum;
 import com.lxq.train.business.enums.SeatTypeEnum;
-import com.lxq.train.business.mapper.ConformOrderMapper;
+import com.lxq.train.business.mapper.ConfirmOrderMapper;
+import com.lxq.train.business.req.ConfirmOrderAcceptReq;
+import com.lxq.train.business.req.ConfirmOrderQueryReq;
 import com.lxq.train.business.req.ConfirmOrderTicketReq;
-import com.lxq.train.business.req.ConformOrderAcceptReq;
-import com.lxq.train.business.req.ConformOrderQueryReq;
-import com.lxq.train.business.resp.ConformOrderQueryResp;
+import com.lxq.train.business.resp.ConfirmOrderQueryResp;
 import com.lxq.train.common.context.LoginMemberContext;
 import com.lxq.train.common.exception.BusinessException;
 import com.lxq.train.common.exception.BusinessExceptionEnum;
@@ -35,57 +35,57 @@ import java.util.List;
 
 
 @Service
-public class ConformOrderService {
-    private static final Logger LOG = LoggerFactory.getLogger(ConformOrderService.class);
+public class ConfirmOrderService {
+    private static final Logger LOG = LoggerFactory.getLogger(ConfirmOrderService.class);
 
     @Resource
-    private ConformOrderMapper conformOrderMapper;
+    private ConfirmOrderMapper confirmOrderMapper;
     @Resource
     private DailyTrainTicketService dailyTrainTicketService;
     @Resource
     private DailyTrainCarriageService dailyTrainCarriageService;
     @Resource
     private DailyTrainSeatService dailyTrainSeatService;
-    public void save(ConformOrderAcceptReq req){
+    public void save(ConfirmOrderAcceptReq req){
         DateTime now = new DateTime();
-        ConformOrder conformOrder = BeanUtil.copyProperties(req, ConformOrder.class);
-        if (ObjectUtil.isNull(conformOrder.getId())) {
-            conformOrder.setId(SnowUtil.getSnowFlakeNextId());
-            conformOrder.setCreateTime(now);
-            conformOrder.setUpdateTime(now);
-            conformOrderMapper.insert(conformOrder);
+        ConfirmOrder confirmOrder = BeanUtil.copyProperties(req, ConfirmOrder.class);
+        if (ObjectUtil.isNull(confirmOrder.getId())) {
+            confirmOrder.setId(SnowUtil.getSnowFlakeNextId());
+            confirmOrder.setCreateTime(now);
+            confirmOrder.setUpdateTime(now);
+            confirmOrderMapper.insert(confirmOrder);
         }else{
-            conformOrder.setUpdateTime(now);
-            conformOrderMapper.updateByPrimaryKey(conformOrder);
+            confirmOrder.setUpdateTime(now);
+            confirmOrderMapper.updateByPrimaryKey(confirmOrder);
         }
     }
 
-    public PageResp<ConformOrderQueryResp> query(ConformOrderQueryReq req){
-        ConformOrderExample conformOrderExample = new ConformOrderExample();
-        conformOrderExample.setOrderByClause("id DESC");
-        ConformOrderExample.Criteria criteria = conformOrderExample.createCriteria();
+    public PageResp<ConfirmOrderQueryResp> query(ConfirmOrderQueryReq req){
+        ConfirmOrderExample confirmOrderExample = new ConfirmOrderExample();
+        confirmOrderExample.setOrderByClause("id DESC");
+        ConfirmOrderExample.Criteria criteria = confirmOrderExample.createCriteria();
 
         LOG.info("查询页数为："+ req.getPage());
         LOG.info("每页条数为："+ req.getSize());
         PageHelper.startPage(req.getPage(),req.getSize());
-        List<ConformOrder> conformOrderList = conformOrderMapper.selectByExample(conformOrderExample);
+        List<ConfirmOrder> confirmOrderList = confirmOrderMapper.selectByExample(confirmOrderExample);
 
-        PageInfo pageInfo = new PageInfo<>(conformOrderList);
+        PageInfo pageInfo = new PageInfo<>(confirmOrderList);
         LOG.info("总数为："+ pageInfo.getTotal());
         LOG.info("最大分配的页数为："+ pageInfo.getPages());
-        List<ConformOrderQueryResp> conformOrderQueryResp = BeanUtil.copyToList(conformOrderList, ConformOrderQueryResp.class);
+        List<ConfirmOrderQueryResp> confirmOrderQueryResp = BeanUtil.copyToList(confirmOrderList, ConfirmOrderQueryResp.class);
 
-        PageResp<ConformOrderQueryResp> pageResp = new PageResp<>();
+        PageResp<ConfirmOrderQueryResp> pageResp = new PageResp<>();
         pageResp.setTotal(pageInfo.getTotal());
-        pageResp.setList(conformOrderQueryResp);
+        pageResp.setList(confirmOrderQueryResp);
         return pageResp;
     }
 
     public void delete(Long id ){
-        conformOrderMapper.deleteByPrimaryKey(id);
+        confirmOrderMapper.deleteByPrimaryKey(id);
     }
 
-    public void doConfirm(ConformOrderAcceptReq req){
+    public void doConfirm(ConfirmOrderAcceptReq req){
         // 省略业务数据校验，如车次是否存在，余票是否存在，车次是否在有效期内，tickets条数>0，同乘客同车次是否已经购买过
         // 做这个的目的是为了防止有人直接调用后端接口
 
@@ -97,7 +97,7 @@ public class ConformOrderService {
         List<ConfirmOrderTicketReq> tickets = req.getTickets();
 
         DateTime now = new DateTime();
-        ConformOrder order = new ConformOrder();
+        ConfirmOrder order = new ConfirmOrder();
         order.setId(SnowUtil.getSnowFlakeNextId());
         order.setMemberId(LoginMemberContext.getId());
         order.setDate(date);
@@ -109,7 +109,7 @@ public class ConformOrderService {
         order.setCreateTime(now);
         order.setUpdateTime(now);
         order.setTickets(JSON.toJSONString(tickets));
-        conformOrderMapper.insert(order);
+        confirmOrderMapper.insert(order);
 
         // 查出余票记录，得到真实的余票信息
         DailyTrainTicket dailyTrainTicket = dailyTrainTicketService.selectByUnique(date, trainCode, start, end);

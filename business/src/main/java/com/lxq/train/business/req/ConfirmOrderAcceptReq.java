@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 
-public class ConformOrderAcceptReq {
+public class ConfirmOrderAcceptReq {
 
     /**
      * 日期
@@ -96,7 +96,7 @@ public class ConformOrderAcceptReq {
 
     @Override
     public String toString() {
-        return "ConformOrderAcceptReq{" +
+        return "ConfirmOrderAcceptReq{" +
                 "date=" + date +
                 ", trainCode='" + trainCode + '\'' +
                 ", start='" + start + '\'' +

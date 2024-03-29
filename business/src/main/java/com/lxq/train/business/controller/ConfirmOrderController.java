@@ -1,7 +1,7 @@
 package com.lxq.train.business.controller;
 
-import com.lxq.train.business.req.ConformOrderAcceptReq;
-import com.lxq.train.business.service.ConformOrderService;
+import com.lxq.train.business.req.ConfirmOrderAcceptReq;
+import com.lxq.train.business.service.ConfirmOrderService;
 import com.lxq.train.common.resp.CommonResp;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/confirm-order")
-public class ConformOrderController {
+public class ConfirmOrderController {
     @Resource
-    private ConformOrderService conformOrderService;
+    private ConfirmOrderService confirmOrderService;
     @PostMapping("/accept")
-    public CommonResp<Object> doConfirm(@Valid @RequestBody ConformOrderAcceptReq req){
-        conformOrderService.doConfirm(req);
+    public CommonResp<Object> doConfirm(@Valid @RequestBody ConfirmOrderAcceptReq req){
+        confirmOrderService.doConfirm(req);
         return new CommonResp<>();
     }
 }

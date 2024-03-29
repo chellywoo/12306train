@@ -6,7 +6,7 @@
       <a-button type="primary" @click="handleQuery()"><sync-outlined/>刷新</a-button>
     </a-space>
   </p>
-  <a-table :dataSource="conformOrders"
+  <a-table :dataSource="confirmOrders"
            :columns="columns"
            :pagination="pagination"
            @change="handleTableChange"
@@ -33,7 +33,7 @@ export default defineComponent({
   setup() {
     const CONFIRM_ORDER_STATUS_ARRAY = window.CONFIRM_ORDER_STATUS;
     const visible = ref(false);
-    let conformOrder = ref({
+    let confirmOrder = ref({
       id: undefined,
       memberId: undefined,
       date: undefined,
@@ -47,7 +47,7 @@ export default defineComponent({
       updateTime: undefined,
     });
 
-    const conformOrders = ref([]);
+    const confirmOrders = ref([]);
     const columns = [
       {
         title: '用户id',
@@ -117,7 +117,7 @@ export default defineComponent({
         let data = response.data;
         if (data.success) {
           loading.value = false;
-          conformOrders.value = data.content.list;
+          confirmOrders.value = data.content.list;
           pagination.value.current = param.page;//如果不加这一行，点击第二页之后，虽然列表修改了但是页码还在第一页
           pagination.value.total = data.content.total;
         } else {
@@ -144,10 +144,10 @@ export default defineComponent({
     return {
       CONFIRM_ORDER_STATUS_ARRAY,
       pagination,
-      conformOrders,
+      confirmOrders,
       columns,
       visible,
-      conformOrder,
+      confirmOrder,
       loading,
       handleQuery,
       handleTableChange,
