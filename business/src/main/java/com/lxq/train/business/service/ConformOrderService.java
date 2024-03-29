@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -11,6 +12,7 @@ import com.lxq.train.business.domain.ConformOrder;
 import com.lxq.train.business.domain.ConformOrderExample;
 import com.lxq.train.business.domain.DailyTrainTicket;
 import com.lxq.train.business.enums.ConfirmOrderStatusEnum;
+import com.lxq.train.business.enums.SeatColEnum;
 import com.lxq.train.business.enums.SeatTypeEnum;
 import com.lxq.train.business.mapper.ConformOrderMapper;
 import com.lxq.train.business.req.ConfirmOrderTicketReq;
@@ -27,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -87,6 +90,7 @@ public class ConformOrderService {
         String trainCode = req.getTrainCode();
         String start = req.getStart();
         String end = req.getEnd();
+        List<ConfirmOrderTicketReq> tickets = req.getTickets();
 
         DateTime now = new DateTime();
         ConformOrder order = new ConformOrder();
@@ -100,7 +104,6 @@ public class ConformOrderService {
         order.setStatus(ConfirmOrderStatusEnum.INIT.getCode());
         order.setCreateTime(now);
         order.setUpdateTime(now);
-        List<ConfirmOrderTicketReq> tickets = req.getTickets();
         order.setTickets(JSON.toJSONString(tickets));
         conformOrderMapper.insert(order);
 
@@ -111,6 +114,45 @@ public class ConformOrderService {
         // 预扣减余票数据，并判断余票是否充足
         PreReduceTickets(req.getTickets(), dailyTrainTicket);
 
+        // 计算相对第一个座位的偏移值
+        // 比如选择的是C1，D2时，偏移值是[0,5];
+        // 读取ticket.seat，若存在数据，说明选座了，若为空，则说明为未选座
+        ConfirmOrderTicketReq ticket1 = tickets.get(0);
+        if (StrUtil.isBlank(ticket1.getSeat())) {
+            LOG.info("本次购票未选座");
+        } else {
+            LOG.info("本次购票存在选座");
+            // 查出本次选座的座位类型有哪些列，用于计算所选座位与第一个座位的偏移值，与预减库存时的方法类似
+            List<SeatColEnum> colEnumList = SeatColEnum.getColsByType(ticket1.getSeatTypeCode());
+            LOG.info("本次选座的座位类型中的列为：{}", colEnumList);
+
+            // 组成和前端类似的两排座位列表，用于作参照的座位列表
+            List<String> seatList = new ArrayList<>();
+            for (int i = 1; i <= 2; i++) {
+                for (int j = 0; j < colEnumList.size(); j++) {
+                    seatList.add(colEnumList.get(j).getCode() + i);
+                }
+            }
+            LOG.info("用于作参照的座位列表：{}", seatList);
+
+            // 查询当前购票列表中的偏移值，[A1,c1,d1,f1,a2,c2,d2,f2],计算出的[c1,d2]的偏移量为[1,6]，但需要将其改为[0,5]
+//            List<Integer> absoluteOffsetList = new ArrayList<>();
+//            for (ConfirmOrderTicketReq ticketReq : tickets) {
+//                int index = seatList.indexOf(ticketReq.getSeat());
+//                absoluteOffsetList.add(index);
+//            }
+//            LOG.info("计算得到所有座位的绝对偏移值：{}", absoluteOffsetList);
+//            上述的这个绝对偏移值没必要写，如果根据这个在遍历一次浪费时间，直接获取第一个座位的偏移量，得到后续的相对偏移量即可
+
+            List<Integer> offsetList = new ArrayList<>();
+            int offset = seatList.indexOf(ticket1.getSeat());
+            for (ConfirmOrderTicketReq ticketReq : tickets) {
+                int index = seatList.indexOf(ticketReq.getSeat());
+                offsetList.add(index - offset);
+            }
+            LOG.info("计算得到所有座位的相对偏移值：{}", offsetList);
+
+        }
 
         // 选座
             // 一个车厢一个车厢的获取座位数据
@@ -133,13 +175,13 @@ public class ConformOrderService {
 //                edz--;
             String seatTypeCode = ticket.getSeatTypeCode();
             SeatTypeEnum seatTypeEnum = EnumUtil.getBy(SeatTypeEnum::getCode, seatTypeCode);
-            LOG.info("车票类型：{}", seatTypeCode);
-            LOG.info("枚举：{}", seatTypeEnum);
+//            LOG.info("车票类型：{}", seatTypeCode);
+//            LOG.info("枚举：{}", seatTypeEnum);
 
             switch (seatTypeEnum) {
                 case YDZ -> {
                     int countLast = dailyTrainTicket.getYdz() - 1;
-                    LOG.info("一等座余量:{}", dailyTrainTicket.getYdz());
+//                    LOG.info("一等座余量:{}", dailyTrainTicket.getYdz());
                     if (countLast < 0)
                         throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_YDZ_TICKET_COUNT_ERROR);
                     dailyTrainTicket.setYdz(countLast);
