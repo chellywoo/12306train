@@ -2,6 +2,7 @@ package com.lxq.train.business.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
+import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
@@ -10,11 +11,15 @@ import com.lxq.train.business.domain.ConformOrder;
 import com.lxq.train.business.domain.ConformOrderExample;
 import com.lxq.train.business.domain.DailyTrainTicket;
 import com.lxq.train.business.enums.ConfirmOrderStatusEnum;
+import com.lxq.train.business.enums.SeatTypeEnum;
 import com.lxq.train.business.mapper.ConformOrderMapper;
+import com.lxq.train.business.req.ConfirmOrderTicketReq;
 import com.lxq.train.business.req.ConformOrderAcceptReq;
 import com.lxq.train.business.req.ConformOrderQueryReq;
 import com.lxq.train.business.resp.ConformOrderQueryResp;
 import com.lxq.train.common.context.LoginMemberContext;
+import com.lxq.train.common.exception.BusinessException;
+import com.lxq.train.common.exception.BusinessExceptionEnum;
 import com.lxq.train.common.resp.PageResp;
 import com.lxq.train.common.util.SnowUtil;
 import jakarta.annotation.Resource;
@@ -74,7 +79,7 @@ public class ConformOrderService {
     }
 
     public void doConfirm(ConformOrderAcceptReq req){
-        // 省略业务数据校验，如车次是否存在，余票是否存在，车次是否在有晓琪内，tickets条数>0，同乘客同车次是否已经购买过
+        // 省略业务数据校验，如车次是否存在，余票是否存在，车次是否在有效期内，tickets条数>0，同乘客同车次是否已经购买过
         // 做这个的目的是为了防止有人直接调用后端接口
 
         // 保存数据确认订单表，状态初始化
@@ -95,7 +100,8 @@ public class ConformOrderService {
         order.setStatus(ConfirmOrderStatusEnum.INIT.getCode());
         order.setCreateTime(now);
         order.setUpdateTime(now);
-        order.setTickets(JSON.toJSONString(req.getTickets()));
+        List<ConfirmOrderTicketReq> tickets = req.getTickets();
+        order.setTickets(JSON.toJSONString(tickets));
         conformOrderMapper.insert(order);
 
         // 查出余票记录，得到真实的余票信息
@@ -103,6 +109,8 @@ public class ConformOrderService {
         LOG.info("查出余票记录：{}", dailyTrainTicket);
 
         // 预扣减余票数据，并判断余票是否充足
+        PreReduceTickets(req.getTickets(), dailyTrainTicket);
+
 
         // 选座
             // 一个车厢一个车厢的获取座位数据
@@ -114,5 +122,47 @@ public class ConformOrderService {
             // 余票详情修改余票
             // 为用户增加购票记录
             // 更新确认订单表状态为成功
+    }
+
+    private static void PreReduceTickets(List<ConfirmOrderTicketReq> tickets, DailyTrainTicket dailyTrainTicket) {
+        for (ConfirmOrderTicketReq ticket : tickets) {
+            // 我自己写的方法，每次都去找对应的枚举值，有点麻烦，这样写很耗时间
+//            if (Objects.equals(ticket.getSeatTypeCode(), SeatTypeEnum.YDZ.getCode())) {
+//                ydz--;
+//            }else if(Objects.equals(ticket.getSeatTypeCode(), SeatTypeEnum.EDZ.getCode()))
+//                edz--;
+            String seatTypeCode = ticket.getSeatTypeCode();
+            SeatTypeEnum seatTypeEnum = EnumUtil.getBy(SeatTypeEnum::getCode, seatTypeCode);
+            LOG.info("车票类型：{}", seatTypeCode);
+            LOG.info("枚举：{}", seatTypeEnum);
+
+            switch (seatTypeEnum) {
+                case YDZ -> {
+                    int countLast = dailyTrainTicket.getYdz() - 1;
+                    LOG.info("一等座余量:{}", dailyTrainTicket.getYdz());
+                    if (countLast < 0)
+                        throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_YDZ_TICKET_COUNT_ERROR);
+                    dailyTrainTicket.setYdz(countLast);
+                }
+                case EDZ -> {
+                    int countLast = dailyTrainTicket.getEdz() - 1;
+                    if (countLast < 0)
+                        throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_EDZ_TICKET_COUNT_ERROR);
+                    dailyTrainTicket.setEdz(countLast);
+                }
+                case RW -> {
+                    int countLast = dailyTrainTicket.getRw() - 1;
+                    if (countLast < 0)
+                        throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_RW_TICKET_COUNT_ERROR);
+                    dailyTrainTicket.setRw(countLast);
+                }
+                case YW -> {
+                    int countLast = dailyTrainTicket.getYw() - 1;
+                    if (countLast < 0)
+                        throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_YW_TICKET_COUNT_ERROR);
+                    dailyTrainTicket.setYw(countLast);
+                }
+            }
+        }
     }
 }
