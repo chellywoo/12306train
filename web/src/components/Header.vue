@@ -30,6 +30,11 @@
           <coffee-outlined /> &nbsp; 购票
         </router-link>
       </a-menu-item>
+      <a-menu-item key="/ticket">
+        <router-link to="/ticket">
+          <coffee-outlined /> &nbsp; 车票
+        </router-link>
+      </a-menu-item>
     </a-menu>
   </a-layout-header>
 </template>

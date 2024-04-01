@@ -32,6 +32,10 @@ const routes = [
       path: 'submit-order',
       name: 'submit-order',
       component: () => import(/* webpackChunkName: "about" */ '../views/main/submit-order.vue'),
+    }, {
+      path: 'ticket',
+      name: 'ticket',
+      component: () => import(/* webpackChunkName: "about" */ '../views/main/ticket.vue'),
     }]
   },{
     path: '',

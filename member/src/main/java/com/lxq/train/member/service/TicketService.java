@@ -2,6 +2,7 @@ package com.lxq.train.member.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
+import cn.hutool.core.util.ObjUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lxq.train.common.req.MemberTicketReq;
@@ -40,6 +41,9 @@ public class TicketService {
         TicketExample ticketExample = new TicketExample();
         ticketExample.setOrderByClause("id DESC");
         TicketExample.Criteria criteria = ticketExample.createCriteria();
+        if(ObjUtil.isNotEmpty(req.getMemberId())){
+            criteria.andMemberIdEqualTo(req.getMemberId());
+        }
 
         LOG.info("查询页数为："+ req.getPage());
         LOG.info("每页条数为："+ req.getSize());
