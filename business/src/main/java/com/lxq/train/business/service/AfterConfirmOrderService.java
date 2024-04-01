@@ -1,8 +1,11 @@
 package com.lxq.train.business.service;
 
+import com.lxq.train.business.domain.ConfirmOrder;
 import com.lxq.train.business.domain.DailyTrainSeat;
 import com.lxq.train.business.domain.DailyTrainTicket;
+import com.lxq.train.business.enums.ConfirmOrderStatusEnum;
 import com.lxq.train.business.feign.MemberFeign;
+import com.lxq.train.business.mapper.ConfirmOrderMapper;
 import com.lxq.train.business.mapper.DailyTrainSeatMapper;
 import com.lxq.train.business.mapper.customer.DailyTrainTicketCustomerMapper;
 import com.lxq.train.business.req.ConfirmOrderTicketReq;
@@ -29,6 +32,8 @@ public class AfterConfirmOrderService {
     private DailyTrainTicketCustomerMapper dailyTrainTicketCustomerMapper;
     @Resource
     private MemberFeign memberFeign;
+    @Resource
+    private ConfirmOrderMapper confirmOrderMapper;
 
     /***
      * 选中座位后事务处理
@@ -38,7 +43,7 @@ public class AfterConfirmOrderService {
      *  更新确认订单表状态为成功
      */
     @Transactional
-    public void afterDoConfirm(DailyTrainTicket dailyTrainTicket, List<DailyTrainSeat> finalSeatList, List<ConfirmOrderTicketReq>tickets){
+    public void afterDoConfirm(DailyTrainTicket dailyTrainTicket, List<DailyTrainSeat> finalSeatList, List<ConfirmOrderTicketReq>tickets, ConfirmOrder order){
         for (int j = 0; j < finalSeatList.size(); j++) {
             DailyTrainSeat soldSeat = finalSeatList.get(j);
             DailyTrainSeat seatForUpdate = new DailyTrainSeat();
@@ -103,6 +108,12 @@ public class AfterConfirmOrderService {
             req.setSeatType(soldSeat.getSeatType());
             CommonResp<Object> resp = memberFeign.save(req);
             LOG.info("调用member接口，返回:{}", resp);
+
+            ConfirmOrder updateOrderStatus = new ConfirmOrder();
+            updateOrderStatus.setId(order.getId());
+            updateOrderStatus.setUpdateTime(new Date());
+            updateOrderStatus.setStatus(ConfirmOrderStatusEnum.SUCCESS.getCode());
+            confirmOrderMapper.updateByPrimaryKeySelective(updateOrderStatus);
         }
     }
 }
