@@ -20,12 +20,25 @@
         <template #title>
           <span>
             <UnorderedListOutlined/>
+            用户管理
+          </span>
+        </template>
+        <a-menu-item key="/member/ticket">
+          <router-link to="/member/ticket">
+            <user-outlined /> &nbsp; 车票信息
+          </router-link>
+        </a-menu-item>
+      </a-sub-menu>
+      <a-sub-menu key="base">
+        <template #title>
+          <span>
+            <UnorderedListOutlined/>
             业务管理
           </span>
         </template>
         <a-menu-item key="/business/confirm-order">
           <router-link to="/business/confirm-order">
-            <user-outlined /> &nbsp; 订单管理
+            <user-outlined /> &nbsp; 订单状态管理
           </router-link>
         </a-menu-item>
         <a-menu-item key="/business/daily-train-ticket">

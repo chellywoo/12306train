@@ -10,7 +10,7 @@
         v-model:selectedKeys="selectedKeys"
         theme="dark"
         mode="horizontal"
-        :style="{ lineHeight: '64px' }"
+        :style="{ lineHeight: '53px' }"
     >
       <a-menu-item key="/welcome">
         <router-link to="/welcome">

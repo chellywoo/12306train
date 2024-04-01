@@ -25,13 +25,13 @@ const routes = [
       name: 'passenger',
       component: () => import(/* webpackChunkName: "about" */ '../views/main/passenger.vue'),
     }, {
-      path: 'ticket',
-      name: 'ticket',
-      component: () => import(/* webpackChunkName: "about" */ '../views/main/ticket.vue'),
+      path: 'purchase-ticket',
+      name: 'purchase-ticket',
+      component: () => import(/* webpackChunkName: "about" */ '../views/main/purchase-ticket.vue'),
     }, {
-      path: 'order',
-      name: 'order',
-      component: () => import(/* webpackChunkName: "about" */ '../views/main/order.vue'),
+      path: 'submit-order',
+      name: 'submit-order',
+      component: () => import(/* webpackChunkName: "about" */ '../views/main/submit-order.vue'),
     }]
   },{
     path: '',

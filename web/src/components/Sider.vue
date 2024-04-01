@@ -15,9 +15,9 @@
           <coffee-outlined /> &nbsp; 乘客管理
         </router-link>
       </a-menu-item>
-      <a-menu-item key="/ticket">
-        <router-link to="/ticket">
-          <coffee-outlined /> &nbsp; 余票查询
+      <a-menu-item key="/purchase-ticket">
+        <router-link to="/purchase-ticket">
+          <coffee-outlined /> &nbsp; 购票
         </router-link>
       </a-menu-item>
     </a-menu>

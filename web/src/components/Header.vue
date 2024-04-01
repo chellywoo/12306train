@@ -13,7 +13,7 @@
         v-model:selectedKeys="selectedKeys"
         theme="dark"
         mode="horizontal"
-        :style="{ lineHeight: '64px' }"
+        :style="{ lineHeight: '53px' }"
     >
       <a-menu-item key="/welcome">
         <router-link to="/welcome">
@@ -25,9 +25,9 @@
           <coffee-outlined /> &nbsp; 乘客管理
         </router-link>
       </a-menu-item>
-      <a-menu-item key="/ticket">
-        <router-link to="/ticket">
-          <coffee-outlined /> &nbsp; 余票查询
+      <a-menu-item key="/purchase-ticket">
+        <router-link to="/purchase-ticket">
+          <coffee-outlined /> &nbsp; 购票
         </router-link>
       </a-menu-item>
     </a-menu>

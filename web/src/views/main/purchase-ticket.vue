@@ -296,7 +296,7 @@ export default defineComponent({
     const toOrder = (record) => {
       dailyTrainTicket.value = Tool.copy(record);
       SessionStorage.set(SESSION_ORDER, dailyTrainTicket.value);
-      router.push("/order");
+      router.push("/submit-order");
     }
 
     onMounted(() => {
