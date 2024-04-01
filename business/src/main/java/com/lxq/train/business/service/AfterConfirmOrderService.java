@@ -2,8 +2,13 @@ package com.lxq.train.business.service;
 
 import com.lxq.train.business.domain.DailyTrainSeat;
 import com.lxq.train.business.domain.DailyTrainTicket;
+import com.lxq.train.business.feign.MemberFeign;
 import com.lxq.train.business.mapper.DailyTrainSeatMapper;
 import com.lxq.train.business.mapper.customer.DailyTrainTicketCustomerMapper;
+import com.lxq.train.business.req.ConfirmOrderTicketReq;
+import com.lxq.train.common.context.LoginMemberContext;
+import com.lxq.train.common.req.MemberTicketReq;
+import com.lxq.train.common.resp.CommonResp;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +27,8 @@ public class AfterConfirmOrderService {
     private DailyTrainSeatMapper dailyTrainSeatMapper;
     @Resource
     private DailyTrainTicketCustomerMapper dailyTrainTicketCustomerMapper;
+    @Resource
+    private MemberFeign memberFeign;
 
     /***
      * 选中座位后事务处理
@@ -31,15 +38,16 @@ public class AfterConfirmOrderService {
      *  更新确认订单表状态为成功
      */
     @Transactional
-    public void afterDoConfirm(DailyTrainTicket dailyTrainTicket, List<DailyTrainSeat> finalSeatList){
-        for (DailyTrainSeat selledSeat : finalSeatList) {
+    public void afterDoConfirm(DailyTrainTicket dailyTrainTicket, List<DailyTrainSeat> finalSeatList, List<ConfirmOrderTicketReq>tickets){
+        for (int j = 0; j < finalSeatList.size(); j++) {
+            DailyTrainSeat soldSeat = finalSeatList.get(j);
             DailyTrainSeat seatForUpdate = new DailyTrainSeat();
-            seatForUpdate.setId(selledSeat.getId());
-            seatForUpdate.setSell(selledSeat.getSell());
+            seatForUpdate.setId(soldSeat.getId());
+            seatForUpdate.setSell(soldSeat.getSell());
             seatForUpdate.setUpdateTime(new Date());
             dailyTrainSeatMapper.updateByPrimaryKeySelective(seatForUpdate);
-            LOG.info("最后的选座数据为：{}",selledSeat);
-            LOG.info("更新的车座数据为：{}",seatForUpdate);
+            LOG.info("最后的选座数据为：{}", soldSeat);
+            LOG.info("更新的车座数据为：{}", seatForUpdate);
 
             // 计算这个票卖出去之后，影响了哪些站的余票库存
             // 影响的库存：本次选座之前没买过票的，和本次购买的区间有交集的区间
@@ -74,10 +82,27 @@ public class AfterConfirmOrderService {
                     break;
                 }
             LOG.info("影响的终点站的区间为：{}~{}", minEndIndex, maxEndIndex);
-            dailyTrainTicketCustomerMapper.updateCountBySell(selledSeat.getDate(),
-                    selledSeat.getTrainCode(), selledSeat.getSeatType(),
+            dailyTrainTicketCustomerMapper.updateCountBySell(soldSeat.getDate(),
+                    soldSeat.getTrainCode(), soldSeat.getSeatType(),
                     minStartIndex, maxStartIndex,
                     minEndIndex, maxEndIndex);
+
+            MemberTicketReq req = new MemberTicketReq();
+            req.setMemberId(LoginMemberContext.getId());
+            req.setPassengerId(tickets.get(j).getPassengerId());
+            req.setPassengerName(tickets.get(j).getPassengerName());
+            req.setDate(dailyTrainTicket.getDate());
+            req.setTrainCode(dailyTrainTicket.getTrainCode());
+            req.setCarriageIndex(soldSeat.getCarriageIndex());
+            req.setRow(soldSeat.getRow());
+            req.setCol(soldSeat.getCol());
+            req.setStart(dailyTrainTicket.getStart());
+            req.setStartTime(dailyTrainTicket.getStartTime());
+            req.setEnd(dailyTrainTicket.getEnd());
+            req.setEndTime(dailyTrainTicket.getEndTime());
+            req.setSeatType(soldSeat.getSeatType());
+            CommonResp<Object> resp = memberFeign.save(req);
+            LOG.info("调用member接口，返回:{}", resp);
         }
     }
 }

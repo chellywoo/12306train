@@ -8,9 +8,9 @@ import java.util.Date;
 
 public class MemberTicketReq {
     /**
-     * 会员id
+     * 用户id
      */
-    @NotNull(message = "【会员id】不能为空")
+    @NotNull(message = "【用户id】不能为空")
     private Long memberId;
 
     /**
@@ -38,15 +38,15 @@ public class MemberTicketReq {
     private String trainCode;
 
     /**
-     * 厢序
+     * 厢号
      */
-    @NotNull(message = "【厢序】不能为空")
+    @NotNull(message = "【厢号】不能为空")
     private Integer carriageIndex;
 
     /**
-     * 排号|01，02
+     * 行号|01，02
      */
-    @NotBlank(message = "【排号】不能为空")
+    @NotBlank(message = "【行号】不能为空")
     private String row;
 
     /**
