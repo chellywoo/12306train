@@ -1,8 +1,9 @@
 package com.lxq.train.common.resp;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class PageResp<T> {
+public class PageResp<T> implements Serializable {
     private Long total;
     private List<T> list;
 

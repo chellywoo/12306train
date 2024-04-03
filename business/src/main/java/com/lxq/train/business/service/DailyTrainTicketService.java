@@ -56,12 +56,25 @@ public class DailyTrainTicketService {
         }
     }
 
+    @Cacheable(value = "DailyTrainTicketService.query3")
+    public PageResp<DailyTrainTicketQueryResp> query3(DailyTrainTicketQueryReq req) {
+        LOG.info("测试缓存击穿");
+        return null;
+    }
     @CachePut(value = "DailyTrainTicketService.query")
     public PageResp<DailyTrainTicketQueryResp> query2(DailyTrainTicketQueryReq req) {
         return query(req);
     }
     @Cacheable(value="DailyTrainTicketService.query")
     public PageResp<DailyTrainTicketQueryResp> query(DailyTrainTicketQueryReq req){
+        /**
+         * 常见的缓存过期策略
+         *  TTL：超时时间
+         *  LRU：最近最久未使用，删除长时间未使用的数据
+         *  LFU：最近最不经常使用，删除使用次数最低的数据
+         *  FIFO：先进先出
+         *  Random：随机淘汰
+         */
         DailyTrainTicketExample dailyTrainTicketExample = new DailyTrainTicketExample();
         dailyTrainTicketExample.setOrderByClause("date desc, train_code asc");
         DailyTrainTicketExample.Criteria criteria = dailyTrainTicketExample.createCriteria();
