@@ -1,6 +1,8 @@
 // 所有的session key在这里定义，避免多功能使用时重复
 SESSION_ORDER="SESSION_ORDER";
 SESSION_TICKET_PARAMS="SESSION_TICKET_PARAMS";
+SESSION_ALL_TRAIN = "SESSION_ALL_TRAIN"
+SESSION_ALL_STATION = "SESSION_ALL_STATION"
 
 SessionStorage = {
     get: function (key) {
