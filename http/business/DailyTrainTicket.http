@@ -1,0 +1,8 @@
+GET http://localhost:8000/business/admin/daily-train-ticket/query-list?page=3&size=3&trainCode=G1&start=北京南&end=上海
+Accept: application/json
+
+###
+GET http://localhost:8000/business/admin/daily-train-ticket/query-list2?page=3&size=3&trainCode=G1&start=北京南&end=上海
+Accept: application/json
+
+###

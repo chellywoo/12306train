@@ -8,7 +8,10 @@ import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.lxq.train.business.domain.*;
+import com.lxq.train.business.domain.DailyTrain;
+import com.lxq.train.business.domain.DailyTrainTicket;
+import com.lxq.train.business.domain.DailyTrainTicketExample;
+import com.lxq.train.business.domain.TrainStation;
 import com.lxq.train.business.enums.SeatTypeEnum;
 import com.lxq.train.business.enums.TrainTypeEnum;
 import com.lxq.train.business.mapper.DailyTrainTicketMapper;
@@ -20,6 +23,8 @@ import com.lxq.train.common.util.SnowUtil;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -51,6 +56,11 @@ public class DailyTrainTicketService {
         }
     }
 
+    @CachePut(value = "DailyTrainTicketService.query")
+    public PageResp<DailyTrainTicketQueryResp> query2(DailyTrainTicketQueryReq req) {
+        return query(req);
+    }
+    @Cacheable(value="DailyTrainTicketService.query")
     public PageResp<DailyTrainTicketQueryResp> query(DailyTrainTicketQueryReq req){
         DailyTrainTicketExample dailyTrainTicketExample = new DailyTrainTicketExample();
         dailyTrainTicketExample.setOrderByClause("date desc, train_code asc");
