@@ -1,7 +1,6 @@
 <template>
   <p>
     <a-space style="width: 100%">
-      
       <a-button type="primary" @click="handleQuery()"><sync-outlined/>刷新</a-button>
     </a-space>
   </p>
@@ -13,9 +12,9 @@
     <template #bodyCell="{ column,record }">
       <template v-if="column.key === 'operation'">
       </template>
-      <template v-else-if="column.key === 'col'">
+      <template v-else-if="column.key === 'seatCol'">
         <span v-for="item in SEAT_COL_ARRAY" :key="item.code">
-          <span v-if="item.code === record.col && item.type === record.seatType">
+          <span v-if="item.code === record.seatCol && item.type === record.seatType">
             {{ item.desc }}
           </span>
         </span>
@@ -45,14 +44,14 @@ export default defineComponent({
       memberId: undefined,
       passengerId: undefined,
       passengerName: undefined,
-      date: undefined,
+      trainDate: undefined,
       trainCode: undefined,
       carriageIndex: undefined,
-      row: undefined,
-      col: undefined,
-      start: undefined,
+      seatRow: undefined,
+      seatCol: undefined,
+      startStation: undefined,
       startTime: undefined,
-      end: undefined,
+      endStation: undefined,
       endTime: undefined,
       seatType: undefined,
       createTime: undefined,
@@ -67,8 +66,8 @@ export default defineComponent({
       },
       {
         title: '日期',
-        dataIndex: 'date',
-        key: 'date',
+        dataIndex: 'trainDate',
+        key: 'trainDate',
       },
       {
         title: '车次编号',
@@ -82,18 +81,18 @@ export default defineComponent({
       },
       {
         title: '行号',
-        dataIndex: 'row',
-        key: 'row',
+        dataIndex: 'seatRow',
+        key: 'seatRow',
       },
       {
         title: '列号',
-        dataIndex: 'col',
-        key: 'col',
+        dataIndex: 'seatCol',
+        key: 'seatCol',
       },
       {
         title: '出发站',
-        dataIndex: 'start',
-        key: 'start',
+        dataIndex: 'startStation',
+        key: 'startStation',
       },
       {
         title: '出发时间',
@@ -102,8 +101,8 @@ export default defineComponent({
       },
       {
         title: '到达站',
-        dataIndex: 'end',
-        key: 'end',
+        dataIndex: 'endStation',
+        key: 'endStation',
       },
       {
         title: '到达时间',
