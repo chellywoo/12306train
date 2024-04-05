@@ -1,0 +1,21 @@
+POST http://localhost:8000/business/confirm-order/accept
+Content-Type: application/json
+Token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYmYiOjE3MTIyOTExNTEsIm1vYmlsZSI6IjEzNzIwMjM5MDQxIiwiaWQiOjE3NjY2NjYzMzkzNjk0ODgzODQsImV4cCI6MTcxMjMyNzE1MSwiaWF0IjoxNzEyMjkxMTUxfQ.yB9420PvXGp7fN4GcP93b1gNMW_lFYdDs-LUA7HrhSI
+
+{
+  "dailyTrainTicketId": 1771525154002833408,
+  "date": 1712419200000,
+  "end": "南京南",
+  "start": "北京南",
+  "tickets": [{
+      "passengerId": 1768539170910900224,
+      "passengerIdCard": "123456",
+      "passengerName": "李佳琦",
+      "passengerType": "1",
+      "seatTypeCode": "2"
+  }],
+  "trainCode": "G1"
+}
+
+
+###

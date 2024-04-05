@@ -31,11 +31,11 @@ public class DailyTrainTicketAdminController {
         PageResp<DailyTrainTicketQueryResp> query = dailyTrainTicketService.query2(req);
         return new CommonResp<>(query);
     }
-    @GetMapping("/query-list3")
-    public CommonResp<PageResp<DailyTrainTicketQueryResp>> queryList3(@Valid DailyTrainTicketQueryReq req){
-        PageResp<DailyTrainTicketQueryResp> query = dailyTrainTicketService.query3(req);
-        return new CommonResp<>(query);
-    }
+//    @GetMapping("/query-list3")
+//    public CommonResp<PageResp<DailyTrainTicketQueryResp>> queryList3(@Valid DailyTrainTicketQueryReq req){
+//        PageResp<DailyTrainTicketQueryResp> query = dailyTrainTicketService.query3(req);
+//        return new CommonResp<>(query);
+//    }
     @DeleteMapping("/delete/{id}")
     public CommonResp<Object> delete(@PathVariable Long id){
         dailyTrainTicketService.delete(id);

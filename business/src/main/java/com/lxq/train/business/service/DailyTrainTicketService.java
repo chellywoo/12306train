@@ -23,8 +23,6 @@ import com.lxq.train.common.util.SnowUtil;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -56,16 +54,16 @@ public class DailyTrainTicketService {
         }
     }
 
-    @Cacheable(value = "DailyTrainTicketService.query3")
-    public PageResp<DailyTrainTicketQueryResp> query3(DailyTrainTicketQueryReq req) {
-        LOG.info("测试缓存击穿");
-        return null;
-    }
-    @CachePut(value = "DailyTrainTicketService.query")
+//    @Cacheable(value = "DailyTrainTicketService.query3")
+//    public PageResp<DailyTrainTicketQueryResp> query3(DailyTrainTicketQueryReq req) {
+//        LOG.info("测试缓存击穿");
+//        return null;
+//    }
+//    @CachePut(value = "DailyTrainTicketService.query")
     public PageResp<DailyTrainTicketQueryResp> query2(DailyTrainTicketQueryReq req) {
         return query(req);
     }
-    @Cacheable(value="DailyTrainTicketService.query")
+//    @Cacheable(value="DailyTrainTicketService.query")
     public PageResp<DailyTrainTicketQueryResp> query(DailyTrainTicketQueryReq req){
         /**
          * 常见的缓存过期策略
