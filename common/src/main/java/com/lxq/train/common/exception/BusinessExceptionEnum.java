@@ -14,7 +14,7 @@ public enum BusinessExceptionEnum {
     CONFIRM_ORDER_EDZ_TICKET_COUNT_ERROR("二等座余票不足"),
     CONFIRM_ORDER_RW_TICKET_COUNT_ERROR("软卧余票不足"),
     CONFIRM_ORDER_YW_TICKET_COUNT_ERROR("硬卧余票不足"),
-
+    CONFIRM_ORDER_EXCEPTION("服务器繁忙，请稍后重试"),
 
     ;
     private String desc;

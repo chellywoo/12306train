@@ -12,11 +12,12 @@ import com.lxq.train.business.req.ConfirmOrderTicketReq;
 import com.lxq.train.common.context.LoginMemberContext;
 import com.lxq.train.common.req.MemberTicketReq;
 import com.lxq.train.common.resp.CommonResp;
+import io.seata.core.context.RootContext;
+import io.seata.spring.annotation.GlobalTransactional;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -42,8 +43,10 @@ public class AfterConfirmOrderService {
      *  为用户增加购票记录
      *  更新确认订单表状态为成功
      */
-    @Transactional
-    public void afterDoConfirm(DailyTrainTicket dailyTrainTicket, List<DailyTrainSeat> finalSeatList, List<ConfirmOrderTicketReq>tickets, ConfirmOrder order){
+//    @Transactional
+    @GlobalTransactional
+    public void afterDoConfirm(DailyTrainTicket dailyTrainTicket, List<DailyTrainSeat> finalSeatList, List<ConfirmOrderTicketReq>tickets, ConfirmOrder order) throws Exception {
+        LOG.info("seata全局事务ID:{}", RootContext.getXID());
         for (int j = 0; j < finalSeatList.size(); j++) {
             DailyTrainSeat soldSeat = finalSeatList.get(j);
             DailyTrainSeat seatForUpdate = new DailyTrainSeat();
@@ -96,14 +99,14 @@ public class AfterConfirmOrderService {
             req.setMemberId(LoginMemberContext.getId());
             req.setPassengerId(tickets.get(j).getPassengerId());
             req.setPassengerName(tickets.get(j).getPassengerName());
-            req.setDate(dailyTrainTicket.getDate());
+            req.setTrainDate(dailyTrainTicket.getDate());
             req.setTrainCode(dailyTrainTicket.getTrainCode());
             req.setCarriageIndex(soldSeat.getCarriageIndex());
-            req.setRow(soldSeat.getRow());
-            req.setCol(soldSeat.getCol());
-            req.setStart(dailyTrainTicket.getStart());
+            req.setSeatRow(soldSeat.getRow());
+            req.setSeatCol(soldSeat.getCol());
+            req.setStartStation(dailyTrainTicket.getStart());
             req.setStartTime(dailyTrainTicket.getStartTime());
-            req.setEnd(dailyTrainTicket.getEnd());
+            req.setEndStation(dailyTrainTicket.getEnd());
             req.setEndTime(dailyTrainTicket.getEndTime());
             req.setSeatType(soldSeat.getSeatType());
             CommonResp<Object> resp = memberFeign.save(req);
@@ -114,6 +117,10 @@ public class AfterConfirmOrderService {
             updateOrderStatus.setUpdateTime(new Date());
             updateOrderStatus.setStatus(ConfirmOrderStatusEnum.SUCCESS.getCode());
             confirmOrderMapper.updateByPrimaryKeySelective(updateOrderStatus);
+
+            if (1 == 1) {
+                throw new Exception("测试异常");
+            }
         }
     }
 }

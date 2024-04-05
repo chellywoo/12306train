@@ -21,7 +21,7 @@ public class FeignTicketController {
      * @return
      */
     @PostMapping("/save")
-    public CommonResp<Object> save(@RequestBody MemberTicketReq req){
+    public CommonResp<Object> save(@RequestBody MemberTicketReq req) throws Exception {
         ticketService.save(req);
         return new CommonResp<>();
     }
