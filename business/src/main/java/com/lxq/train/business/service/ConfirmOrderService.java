@@ -87,7 +87,7 @@ public class ConfirmOrderService {
         confirmOrderMapper.deleteByPrimaryKey(id);
     }
 
-    public void doConfirm(ConfirmOrderAcceptReq req){
+    public synchronized void doConfirm(ConfirmOrderAcceptReq req){
         // 省略业务数据校验，如车次是否存在，余票是否存在，车次是否在有效期内，tickets条数>0，同乘客同车次是否已经购买过
         // 做这个的目的是为了防止有人直接调用后端接口
 
