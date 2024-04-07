@@ -26,8 +26,6 @@ import com.lxq.train.common.exception.BusinessExceptionEnum;
 import com.lxq.train.common.resp.PageResp;
 import com.lxq.train.common.util.SnowUtil;
 import jakarta.annotation.Resource;
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,8 +56,8 @@ public class ConfirmOrderService {
     @Autowired
     private StringRedisTemplate redisTemplate;
 
-    @Autowired
-    private RedissonClient redissonClient;
+//    @Autowired
+//    private RedissonClient redissonClient;
     public void save(ConfirmOrderAcceptReq req){
         DateTime now = new DateTime();
         ConfirmOrder confirmOrder = BeanUtil.copyProperties(req, ConfirmOrder.class);
@@ -101,40 +99,41 @@ public class ConfirmOrderService {
 
     public void doConfirm(ConfirmOrderAcceptReq req) {
         String key = DateUtil.formatDate(req.getDate()) + "-" + req.getTrainCode();
-//        Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(key, key, 2, TimeUnit.SECONDS);
-//        if(Boolean.TRUE.equals(setIfAbsent)){
-//            LOG.info("恭喜抢到锁了，lockKey:{}", key);
-//        }else{
-//            // 只是没抢到锁，之后还要继续操作的
-//            LOG.info("很遗憾没抢到锁，lockKey:{}", key);
-//            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_ERROR);
-//        }
-        RLock rLock = null;
-        try {
-            // 使用redisson，自带看门狗
-            rLock = redissonClient.getLock(key);
-            /**
-             * 等待时间，超时返回false；
-             * 锁时长，n秒后自动释放锁
-             */
-//        boolean tryLock = rLock.tryLock(0, 10, TimeUnit.SECONDS);  不带看门狗
-            boolean tryLock = rLock.tryLock(0, TimeUnit.SECONDS);   // 带看门狗
-            if(tryLock){
-                LOG.info("恭喜抢到锁了，lockKey:{}", key);
-                for (int i = 0; i < 30; i++) {
-                    Long expire = redisTemplate.opsForValue().getOperations().getExpire(key);
-                    LOG.info("锁过期时间还剩：{}", expire);
-                    Thread.sleep(1000);
-                }
-            }else {
-                // 只是没抢到锁，之后还要继续操作的
-                LOG.info("很遗憾没抢到锁，lockKey:{}", key);
-                throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_ERROR);
-            }
+        Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(key, key, 2, TimeUnit.SECONDS);
+        if(Boolean.TRUE.equals(setIfAbsent)){
+            LOG.info("恭喜抢到锁了，lockKey:{}", key);
+        }else{
+            // 只是没抢到锁，之后还要继续操作的
+            LOG.info("很遗憾没抢到锁，lockKey:{}", key);
+            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_ERROR);
+        }
+//        RLock rLock = null;
+//        try {
+//            // 使用redisson，自带看门狗
+//            rLock = redissonClient.getLock(key);
+//            /**
+//             * 等待时间，超时返回false；
+//             * 锁时长，n秒后自动释放锁
+//             */
+////        boolean tryLock = rLock.tryLock(0, 10, TimeUnit.SECONDS);  不带看门狗
+//            boolean tryLock = rLock.tryLock(0, TimeUnit.SECONDS);   // 带看门狗
+//            if(tryLock){
+//                LOG.info("恭喜抢到锁了，lockKey:{}", key);
+//                for (int i = 0; i < 30; i++) {
+//                    Long expire = redisTemplate.opsForValue().getOperations().getExpire(key);
+//                    LOG.info("锁过期时间还剩：{}", expire);
+//                    Thread.sleep(1000);
+//                }
+//            }else {
+//                // 只是没抢到锁，之后还要继续操作的
+//                LOG.info("很遗憾没抢到锁，lockKey:{}", key);
+//                throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_ERROR);
+//            }
             // 省略业务数据校验，如车次是否存在，余票是否存在，车次是否在有效期内，tickets条数>0，同乘客同车次是否已经购买过
             // 做这个的目的是为了防止有人直接调用后端接口
 
             // 保存数据确认订单表，状态初始化
+        try {
             Date date = req.getDate();
             String trainCode = req.getTrainCode();
             String start = req.getStart();
@@ -222,15 +221,17 @@ public class ConfirmOrderService {
                 LOG.error("保存购票信息失败", e);
                 throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_EXCEPTION);
             }
+//        } catch (InterruptedException e) {
+//            LOG.error("购票异常", e);
+//        }finally {
 //            LOG.info("购票流程结束，释放锁");
-//            redisTemplate.delete(key);
-        } catch (InterruptedException e) {
-            LOG.error("购票异常", e);
-        }finally {
+//            if(null != rLock && rLock.isHeldByCurrentThread()){
+//                rLock.unlock();
+//            }
+//        }
+        } finally {
             LOG.info("购票流程结束，释放锁");
-            if(null != rLock && rLock.isHeldByCurrentThread()){
-                rLock.unlock();
-            }
+            redisTemplate.delete(key);
         }
     }
 

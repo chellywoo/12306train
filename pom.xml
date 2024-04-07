@@ -97,11 +97,11 @@
                 <scope>import</scope>
             </dependency>
 
-            <dependency>
-                <groupId>org.redisson</groupId>
-                <artifactId>redisson-spring-boot-starter</artifactId>
-                <version>3.21.3</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.redisson</groupId>-->
+<!--                <artifactId>redisson-spring-boot-starter</artifactId>-->
+<!--                <version>3.21.3</version>-->
+<!--            </dependency>-->
 
         </dependencies>
     </dependencyManagement>
