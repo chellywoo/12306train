@@ -15,6 +15,7 @@ public enum BusinessExceptionEnum {
     CONFIRM_ORDER_RW_TICKET_COUNT_ERROR("软卧余票不足"),
     CONFIRM_ORDER_YW_TICKET_COUNT_ERROR("硬卧余票不足"),
     CONFIRM_ORDER_EXCEPTION("服务器繁忙，请稍后重试"),
+    CONFIRM_ORDER_LOCK_ERROR("当前人数过多，请稍后重试"),
 
     ;
     private String desc;

@@ -3,6 +3,7 @@ package com.lxq.train.business.service;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -27,11 +28,14 @@ import com.lxq.train.common.util.SnowUtil;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 @Service
@@ -48,6 +52,8 @@ public class ConfirmOrderService {
     private DailyTrainSeatService dailyTrainSeatService;
     @Resource
     private AfterConfirmOrderService afterConfirmOrderService;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
     public void save(ConfirmOrderAcceptReq req){
         DateTime now = new DateTime();
         ConfirmOrder confirmOrder = BeanUtil.copyProperties(req, ConfirmOrder.class);
@@ -87,7 +93,16 @@ public class ConfirmOrderService {
         confirmOrderMapper.deleteByPrimaryKey(id);
     }
 
-    public synchronized void doConfirm(ConfirmOrderAcceptReq req){
+    public void doConfirm(ConfirmOrderAcceptReq req){
+        String key = DateUtil.formatDate(req.getDate()) + "-" + req.getTrainCode();
+        Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(key, key, 2, TimeUnit.SECONDS);
+        if(Boolean.TRUE.equals(setIfAbsent)){
+            LOG.info("恭喜抢到锁了，lockKey:{}", key);
+        }else{
+            // 只是没抢到锁，之后还要继续操作的
+            LOG.info("很遗憾没抢到锁，lockKey:{}", key);
+            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_ERROR);
+        }
         // 省略业务数据校验，如车次是否存在，余票是否存在，车次是否在有效期内，tickets条数>0，同乘客同车次是否已经购买过
         // 做这个的目的是为了防止有人直接调用后端接口
 
@@ -179,6 +194,8 @@ public class ConfirmOrderService {
             LOG.error("保存购票信息失败", e);
             throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_EXCEPTION);
         }
+        LOG.info("执行结束，释放锁");
+        redisTemplate.delete(key);
     }
 
     /**
