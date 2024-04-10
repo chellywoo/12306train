@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class ServerGenerator {
-    static boolean readOnly = true;
+    static boolean readOnly = false;
     static String vuePath = "admin/src/views/main/";
     static String serverPath = "[module]/src/main/java/com/lxq/train/[module]/";
     static String pomPath = "generator/pom.xml";
@@ -69,10 +69,10 @@ public class ServerGenerator {
         param.put("readOnly", readOnly);
         System.out.println("组装参数 = " + param);
 
-//        generateFile(Domain, param, "service","service");
-//        generateFile(Domain, param, "controller/admin","adminController");
+        generateFile(Domain, param, "service","service");
+        generateFile(Domain, param, "controller/admin","adminController");
         generateFile(Domain, param, "req", "saveReq");
-//        generateFile(Domain, param, "req","queryReq");
+        generateFile(Domain, param, "req","queryReq");
         generateFile(Domain, param, "resp","queryResp");
 
         generateVue(do_main, param);

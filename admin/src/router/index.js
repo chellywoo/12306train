@@ -59,6 +59,10 @@ const routes = [
                 path: 'confirm-order',
                 name: 'confirm-order',
                 component: () => import(/* webpackChunkName: "about" */ '../views/main/business/confirm-order.vue'),
+            },{
+                path: 'sk-token',
+                name: 'sk-token',
+                component: () => import(/* webpackChunkName: "about" */ '../views/main/business/sk-token.vue'),
             }]
         }, {
             path: 'base/',

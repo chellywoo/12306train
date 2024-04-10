@@ -41,6 +41,11 @@
             <user-outlined /> &nbsp; 订单状态管理
           </router-link>
         </a-menu-item>
+        <a-menu-item key="/business/sk-token">
+          <router-link to="/business/sk-token">
+            <user-outlined /> &nbsp; 令牌余量
+          </router-link>
+        </a-menu-item>
         <a-menu-item key="/business/daily-train-ticket">
           <router-link to="/business/daily-train-ticket">
             <user-outlined /> &nbsp; 余票管理
