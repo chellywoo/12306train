@@ -2,7 +2,7 @@
   <!--  <h1>乘客界面</h1>-->
   <p>
     <a-space style="width: 100%">
-      <a-button type="primary" @click="OnAdd"><plus-outlined />新增</a-button>
+<!--      <a-button type="primary" @click="OnAdd"><plus-outlined />新增</a-button>-->
       <a-button type="primary" @click="handleQuery()"><sync-outlined/>刷新</a-button>
     </a-space>
   </p>
@@ -14,11 +14,11 @@
     <template #bodyCell="{ column,record }">
       <template v-if="column.key === 'operation'">
         <a-space>
-          <a style="color: blueviolet" @click="OnEdit(record)"><edit-outlined/>编辑</a>
-          <a-popconfirm title="删除后不可恢复，确定删除?" ok-text="确认" cancel-text="取消" @confirm="OnDelete(record)">
-            <delete-outlined style="color: red"/>
-            <a style="color: red">删除</a>
-          </a-popconfirm>
+          <a style="color: blueviolet" @click="OnEdit(record)"><edit-outlined/>修改令牌余量</a>
+<!--          <a-popconfirm title="删除后不可恢复，确定删除?" ok-text="确认" cancel-text="取消" @confirm="OnDelete(record)">-->
+<!--            <delete-outlined style="color: red"/>-->
+<!--            <a style="color: red">删除</a>-->
+<!--          </a-popconfirm>-->
         </a-space>
       </template>
     </template>
@@ -30,10 +30,10 @@
         :label-col="{ span: 4 }"
         :wrapper-col="{ span: 20 }">
       <a-form-item label="日期">
-        <a-date-picker v-model:value="skToken.date" valueFormat="YYYY-MM-DD" placeholder="请选择日期" />
+        <a-date-picker v-model:value="skToken.date" valueFormat="YYYY-MM-DD" placeholder="请选择日期" disabled/>
       </a-form-item>
       <a-form-item label="车次编号">
-        <train-select-view v-model:value="skToken.trainCode" width="200px"/>
+        <a-input v-model:value="skToken.trainCode" disabled/>
       </a-form-item>
       <a-form-item label="令牌余量">
         <a-input v-model:value="skToken.count"/>
@@ -45,10 +45,8 @@
 import {defineComponent, onMounted, ref} from "vue";
 import axios from "axios";
 import {notification} from "ant-design-vue";
-import TrainSelectView from "@/components/train-select.vue";
 
 export default defineComponent({
-  components: {TrainSelectView},
   setup() {
     const visible = ref(false);
     let skToken = ref({
