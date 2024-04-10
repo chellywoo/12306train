@@ -125,10 +125,10 @@ public class DailyTrainTicketService {
         }
 
         // 计算每个座位类型的座位数量
-        int ydz = dailyTrainSeatService.countSeat(date, trainCode, SeatTypeEnum.YDZ.getCode());
-        int edz = dailyTrainSeatService.countSeat(date, trainCode, SeatTypeEnum.EDZ.getCode());
-        int rw = dailyTrainSeatService.countSeat(date, trainCode, SeatTypeEnum.RW.getCode());
-        int yw = dailyTrainSeatService.countSeat(date, trainCode, SeatTypeEnum.YW.getCode());
+        int ydz = dailyTrainSeatService.countBySeatType(date, trainCode, SeatTypeEnum.YDZ.getCode());
+        int edz = dailyTrainSeatService.countBySeatType(date, trainCode, SeatTypeEnum.EDZ.getCode());
+        int rw = dailyTrainSeatService.countBySeatType(date, trainCode, SeatTypeEnum.RW.getCode());
+        int yw = dailyTrainSeatService.countBySeatType(date, trainCode, SeatTypeEnum.YW.getCode());
 
         // 计算每个座位的价位 票价 = 车类型 * 累计里程数 * 座位类型
         // 先要知道车的类型

@@ -107,4 +107,11 @@ public class DailyTrainStationService {
         }
         LOG.info("生成【{}】日车次【{}】车站数据结束", DateUtil.formatDate(date),trainCode);
     }
+
+    public long countByTrainCode(Date date, String trainCode){
+        DailyTrainStationExample dailyTrainStationExample = new DailyTrainStationExample();
+        dailyTrainStationExample.createCriteria().andDateEqualTo(date).andTrainCodeEqualTo(trainCode);
+        long l = dailyTrainStationMapper.countByExample(dailyTrainStationExample);
+        return l;
+    }
 }

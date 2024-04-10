@@ -40,6 +40,8 @@ public class DailyTrainService {
     private DailyTrainSeatService dailyTrainSeatService;
     @Resource
     private DailyTrainTicketService dailyTrainTicketService;
+    @Resource
+    private SkTokenService skTokenService;
 
     public void save(DailyTrainSaveReq req) {
         DateTime now = new DateTime();
@@ -118,6 +120,7 @@ public class DailyTrainService {
         dailyTrainCarriageService.generateDaily(date, train.getCode());
         dailyTrainSeatService.generateDaily(date, train.getCode());
         dailyTrainTicketService.generateDaily(dailyTrain,date,train.getCode());
+        skTokenService.generateDaily(date, train.getCode());
         LOG.info("生成【{}】日车次【{}】数据结束", DateUtil.formatDate(date), train.getCode());
     }
     public void generateOnceTrain(Date date, String trainCode) {
