@@ -18,10 +18,13 @@ import com.lxq.train.common.util.SnowUtil;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 @Service
@@ -35,6 +38,8 @@ public class SkTokenService {
     private SkTokenMapper skTokenMapper;
     @Resource
     private SkTokenCustomerMapper skTokenCustomerMapper;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
     public void save(SkTokenSaveReq req){
         DateTime now = new DateTime();
         SkToken skToken = BeanUtil.copyProperties(req, SkToken.class);
@@ -104,14 +109,26 @@ public class SkTokenService {
     /**
      * 获取令牌
      */
-    public boolean validSkToken(Date date, String trainCode, Long memberId) {
+    public int validSkToken(Date date, String trainCode, Long memberId) {
         LOG.info("用户【{}】获取日期【{}】车次【{}】的令牌开始", memberId, DateUtil.formatDate(date), trainCode);
+
+        // 用户先获取令牌锁，key就是令牌，表示谁能做什么的凭证
+        // 拿到锁进行操作之后不进行释放，保证5s内进行的操作不能再次被处理
+        String key = DateUtil.formatDate(date) + "-" + trainCode + memberId;
+        Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(key, key, 5, TimeUnit.SECONDS);
+        if(Boolean.TRUE.equals(setIfAbsent)){
+            LOG.info("恭喜抢到令牌锁了，lockKey:{}", key);
+        }else{
+            LOG.info("很遗憾没抢到令牌锁，lockKey:{}", key);
+            return -1;
+        }
+
         // 令牌约等于库存，令牌没有了，就不再卖票，不需要再进入购票主流程去判断库存，判断令牌肯定比判断库存效率高
         int updateCount = skTokenCustomerMapper.decrease(date, trainCode);
         if (updateCount > 0) {
-            return true;
+            return 1;
         } else {
-            return false;
+            return 0;
         }
     }
 }

@@ -104,12 +104,14 @@ public class ConfirmOrderService {
     @SentinelResource(value="doConfirm",blockHandler = "doConfirmBlock")
     public void doConfirm(ConfirmOrderAcceptReq req) {
         //校验令牌余量
-        boolean validSkToken = skTokenService.validSkToken(req.getDate(), req.getTrainCode(), LoginMemberContext.getId());
-        if(validSkToken)
+        int validSkToken = skTokenService.validSkToken(req.getDate(), req.getTrainCode(), LoginMemberContext.getId());
+        if(validSkToken > 0)
             LOG.info("令牌校验通过");
-        else {
+        else if(validSkToken == 0){
             LOG.info("未通过令牌校验");
             throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_SK_TOKEN_ERROR);
+        }else{
+            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_SK_TOKEN_EXCEPTION);
         }
 
         String key = DateUtil.formatDate(req.getDate()) + "-" + req.getTrainCode();
