@@ -54,6 +54,8 @@ public class ConfirmOrderService {
     private DailyTrainSeatService dailyTrainSeatService;
     @Resource
     private AfterConfirmOrderService afterConfirmOrderService;
+    @Resource
+    private SkTokenService skTokenService;
 
     @Autowired
     private StringRedisTemplate redisTemplate;
@@ -101,6 +103,15 @@ public class ConfirmOrderService {
 
     @SentinelResource(value="doConfirm",blockHandler = "doConfirmBlock")
     public void doConfirm(ConfirmOrderAcceptReq req) {
+        //校验令牌余量
+        boolean validSkToken = skTokenService.validSkToken(req.getDate(), req.getTrainCode(), LoginMemberContext.getId());
+        if(validSkToken)
+            LOG.info("令牌校验通过");
+        else {
+            LOG.info("未通过令牌校验");
+            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_SK_TOKEN_ERROR);
+        }
+
         String key = DateUtil.formatDate(req.getDate()) + "-" + req.getTrainCode();
         Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(key, key, 2, TimeUnit.SECONDS);
         if(Boolean.TRUE.equals(setIfAbsent)){

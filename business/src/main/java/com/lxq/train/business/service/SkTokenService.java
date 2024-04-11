@@ -9,6 +9,7 @@ import com.github.pagehelper.PageInfo;
 import com.lxq.train.business.domain.SkToken;
 import com.lxq.train.business.domain.SkTokenExample;
 import com.lxq.train.business.mapper.SkTokenMapper;
+import com.lxq.train.business.mapper.customer.SkTokenCustomerMapper;
 import com.lxq.train.business.req.SkTokenQueryReq;
 import com.lxq.train.business.req.SkTokenSaveReq;
 import com.lxq.train.business.resp.SkTokenQueryResp;
@@ -32,6 +33,8 @@ public class SkTokenService {
     private DailyTrainStationService dailyTrainStationService;
     @Resource
     private SkTokenMapper skTokenMapper;
+    @Resource
+    private SkTokenCustomerMapper skTokenCustomerMapper;
     public void save(SkTokenSaveReq req){
         DateTime now = new DateTime();
         SkToken skToken = BeanUtil.copyProperties(req, SkToken.class);
@@ -96,5 +99,19 @@ public class SkTokenService {
         LOG.info("车次【{}】初始生成令牌数为：{}", trainCode, skCount);
         skToken.setCount(skCount);
         skTokenMapper.insert(skToken);
+    }
+
+    /**
+     * 获取令牌
+     */
+    public boolean validSkToken(Date date, String trainCode, Long memberId) {
+        LOG.info("用户【{}】获取日期【{}】车次【{}】的令牌开始", memberId, DateUtil.formatDate(date), trainCode);
+        // 令牌约等于库存，令牌没有了，就不再卖票，不需要再进入购票主流程去判断库存，判断令牌肯定比判断库存效率高
+        int updateCount = skTokenCustomerMapper.decrease(date, trainCode);
+        if (updateCount > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
