@@ -108,6 +108,7 @@
     {{ tickets }}
   </a-modal>
 
+  <!-- 验证码 -->
   <a-modal v-model:visible="imageCodeModalVisible" :title="null" :footer="null" :closable="false"
            105 style="top: 50px; width: 400px">
     <p style="text-align: center; font-weight: bold; font-size: 18px">使用服务端验证码削弱瞬时高峰<br/>防止机器人刷票
@@ -320,7 +321,9 @@ export default defineComponent({
         trainCode: dailyTrainTicket.trainCode,
         start: dailyTrainTicket.start,
         end: dailyTrainTicket.end,
-        tickets: tickets.value
+        tickets: tickets.value,
+        imageCodeToken: imageCodeToken.value,
+        imageCode: imageCode.value,
       }).then((response) => {
         let data = response.data;
         if (data.success) {

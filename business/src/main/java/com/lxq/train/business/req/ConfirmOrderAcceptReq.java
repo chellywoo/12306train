@@ -46,6 +46,18 @@ public class ConfirmOrderAcceptReq {
     @NotNull(message = "车票不能为空")
     private List<ConfirmOrderTicketReq> tickets;
 
+    /**
+     *  图形验证码
+     */
+    @NotBlank(message = "图形验证码不能为空")
+    private String imageCode;
+
+    /**
+     *  图形验证码Token
+     */
+    @NotBlank(message = "图形验证码参数非法")
+    private String imageCodeToken;
+
     public Date getDate() {
         return date;
     }
@@ -92,6 +104,22 @@ public class ConfirmOrderAcceptReq {
 
     public void setTickets(List<ConfirmOrderTicketReq> tickets) {
         this.tickets = tickets;
+    }
+
+    public String getImageCode() {
+        return imageCode;
+    }
+
+    public void setImageCode(String imageCode) {
+        this.imageCode = imageCode;
+    }
+
+    public String getImageCodeToken() {
+        return imageCodeToken;
+    }
+
+    public void setImageCodeToken(String imageCodeToken) {
+        this.imageCodeToken = imageCodeToken;
     }
 
     @Override
