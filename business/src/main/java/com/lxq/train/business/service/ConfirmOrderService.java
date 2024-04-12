@@ -164,7 +164,19 @@ public class ConfirmOrderService {
                 }else{
                     LOG.info("本次处理{}条订单", confirmOrders.size());
                 }
-                confirmOrders.forEach(this::sell);
+                confirmOrders.forEach(confirmOrder -> {
+                    try{
+                        sell(confirmOrder);
+                    }catch (BusinessException e){
+                        if(e.getE().equals(BusinessExceptionEnum.CONFIRM_ORDER_EDZ_TICKET_COUNT_ERROR) || e.getE().equals(BusinessExceptionEnum.CONFIRM_ORDER_YDZ_TICKET_COUNT_ERROR)
+                                || e.getE().equals(BusinessExceptionEnum.CONFIRM_ORDER_RW_TICKET_COUNT_ERROR) || e.getE().equals(BusinessExceptionEnum.CONFIRM_ORDER_YW_TICKET_COUNT_ERROR)){
+                            LOG.info("本订单余票不足，继续售卖下一个订单");
+                            confirmOrder.setStatus(ConfirmOrderStatusEnum.EMPTY.getCode());
+                            updateStatus(confirmOrder);
+                        }else
+                            throw e;
+                    }
+                });
             }
 //        } catch (InterruptedException e) {
 //            LOG.error("购票异常", e);
