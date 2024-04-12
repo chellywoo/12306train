@@ -140,7 +140,7 @@
   <a-modal v-model:visible="lineModelVisible" :title="null" :footer="null" :closable="false"
             style="top: 50px; width: 400px">
     <div class="book-line">
-      <loding-outlined/> 系统正在处理中...
+      <loding-outlined/> 确认订单号{{ confirmOrderID }}系统正在处理中...
     </div>
   </a-modal>
 </template>
@@ -159,6 +159,7 @@ export default defineComponent({
     const PASSENGER_TYPE = window.PASSENGER_TYPE;
     const visible = ref(false);
     const lineModelVisible = ref();
+    const confirmOrderID = ref();
 
     const dailyTrainTicket = SessionStorage.get(SESSION_ORDER) || {}; // 防止空指针异常
     console.log("下单的车次信息：", dailyTrainTicket);
@@ -353,6 +354,7 @@ export default defineComponent({
           imageCodeModalVisible.value = false;
           visible.value = false;
           lineModelVisible.value = true;
+          confirmOrderID.value = data.content;
         } else {
           notification.error({description: data.message});
         }
@@ -436,7 +438,8 @@ export default defineComponent({
       loadFirstImageCode,
       showFirstImageCodeModal,
       validFirstImageCode,
-      lineModelVisible
+      lineModelVisible,
+      confirmOrderID
     };
   },
 });

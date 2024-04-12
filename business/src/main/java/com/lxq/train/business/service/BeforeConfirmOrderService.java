@@ -43,7 +43,7 @@ public class BeforeConfirmOrderService {
     private RocketMQTemplate rocketMQTemplate;
 
     @SentinelResource(value="beforeDoConfirm",blockHandler = "beforeDoConfirmBlock")
-    public void beforeDoConfirm(ConfirmOrderAcceptReq req) {
+    public long beforeDoConfirm(ConfirmOrderAcceptReq req) {
         req.setMemberId(LoginMemberContext.getId());
 
         // 保存数据确认订单表，状态初始化
@@ -88,6 +88,7 @@ public class BeforeConfirmOrderService {
         LOG.info("排队购票，发送MQ消息，消息内容：{}", reqJson);
         rocketMQTemplate.convertAndSend(RocketMQTopicEnum.CONFIRM_ORDER.getCode(),reqJson);
         LOG.info("排队购票，发送MQ消息结束");
+        return order.getId();
     }
 
     //降级处理
