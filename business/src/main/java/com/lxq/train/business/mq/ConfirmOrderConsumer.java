@@ -1,7 +1,7 @@
 package com.lxq.train.business.mq;
 
 import com.alibaba.fastjson.JSON;
-import com.lxq.train.business.req.ConfirmOrderAcceptReq;
+import com.lxq.train.business.dto.ConfirmRocketMQDto;
 import com.lxq.train.business.service.ConfirmOrderService;
 import jakarta.annotation.Resource;
 import org.apache.rocketmq.common.message.MessageExt;
@@ -22,9 +22,9 @@ public class ConfirmOrderConsumer implements RocketMQListener<MessageExt> {
     @Override
     public void onMessage(MessageExt messageExt) {
         byte[] body = messageExt.getBody();
-        ConfirmOrderAcceptReq req = JSON.parseObject(new String(body), ConfirmOrderAcceptReq.class);
-        MDC.put("LOG_ID", req.getLogId());
+        ConfirmRocketMQDto dto = JSON.parseObject(new String(body), ConfirmRocketMQDto.class);
+        MDC.put("LOG_ID", dto.getLogId());
         LOG.info("RocketMQ收到消息：{}", new String(body));
-        confirmOrderService.doConfirm(req);
+        confirmOrderService.doConfirm(dto);
     }
 }
