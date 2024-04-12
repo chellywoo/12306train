@@ -60,6 +60,11 @@ public class ConfirmOrderAcceptReq {
     @NotBlank(message = "图形验证码参数非法")
     private String imageCodeToken;
 
+    /**
+     * 日志跟踪号
+     */
+    private String logId;
+
     public Long getMemberId() {
         return memberId;
     }
@@ -130,6 +135,14 @@ public class ConfirmOrderAcceptReq {
 
     public void setImageCodeToken(String imageCodeToken) {
         this.imageCodeToken = imageCodeToken;
+    }
+
+    public String getLogId() {
+        return logId;
+    }
+
+    public void setLogId(String logId) {
+        this.logId = logId;
     }
 
     @Override

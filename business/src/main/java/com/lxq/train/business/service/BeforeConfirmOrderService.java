@@ -18,6 +18,7 @@ import jakarta.annotation.Resource;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -77,7 +78,8 @@ public class BeforeConfirmOrderService {
             throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_SK_TOKEN_EXCEPTION);
         }
 
-        // 可以购票：TODO 发送MQ，准备出票
+        // 可以购票：
+        req.setLogId(MDC.get("LOG_ID"));
         String reqJson = JSON.toJSONString(req);
         LOG.info("排队购票，发送MQ消息，消息内容：{}", reqJson);
         rocketMQTemplate.convertAndSend(RocketMQTopicEnum.CONFIRM_ORDER.getCode(),reqJson);
