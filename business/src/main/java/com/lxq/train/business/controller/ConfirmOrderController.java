@@ -3,6 +3,7 @@ package com.lxq.train.business.controller;
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.lxq.train.business.req.ConfirmOrderAcceptReq;
+import com.lxq.train.business.service.BeforeConfirmOrderService;
 import com.lxq.train.business.service.ConfirmOrderService;
 import com.lxq.train.common.exception.BusinessExceptionEnum;
 import com.lxq.train.common.resp.CommonResp;
@@ -24,6 +25,8 @@ public class ConfirmOrderController {
     private static final Logger LOG = LoggerFactory.getLogger(ConfirmOrderService.class);
     @Resource
     private ConfirmOrderService confirmOrderService;
+    @Resource
+    private BeforeConfirmOrderService beforeConfirmOrderService;
 
     @Autowired
     private StringRedisTemplate redisTemplate;
@@ -47,7 +50,8 @@ public class ConfirmOrderController {
             // 验证通过后，移除验证码
             redisTemplate.delete(imageCodeToken);
         }
-        confirmOrderService.doConfirm(req);
+//        confirmOrderService.doConfirm(req);
+        beforeConfirmOrderService.beforeDoConfirm(req);
         return new CommonResp<>();
     }
 
