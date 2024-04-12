@@ -122,8 +122,10 @@ public class ConfirmOrderService {
             LOG.info("恭喜抢到锁了，lockKey:{}", key);
         }else{
             // 只是没抢到锁，之后还要继续操作的
-            LOG.info("很遗憾没抢到锁，lockKey:{}", key);
-            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_ERROR);
+//            LOG.info("很遗憾没抢到锁，lockKey:{}", key);
+//            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_ERROR);
+            LOG.info("很遗憾没抢到锁，有其他线程正在出票，不做任何处理");
+            return;
         }
         try {
 //        RLock rLock = null;
