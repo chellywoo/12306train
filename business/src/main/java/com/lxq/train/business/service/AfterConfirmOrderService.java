@@ -9,7 +9,6 @@ import com.lxq.train.business.mapper.ConfirmOrderMapper;
 import com.lxq.train.business.mapper.DailyTrainSeatMapper;
 import com.lxq.train.business.mapper.customer.DailyTrainTicketCustomerMapper;
 import com.lxq.train.business.req.ConfirmOrderTicketReq;
-import com.lxq.train.common.context.LoginMemberContext;
 import com.lxq.train.common.req.MemberTicketReq;
 import com.lxq.train.common.resp.CommonResp;
 import jakarta.annotation.Resource;
@@ -94,7 +93,7 @@ public class AfterConfirmOrderService {
                     minEndIndex, maxEndIndex);
 
             MemberTicketReq req = new MemberTicketReq();
-            req.setMemberId(LoginMemberContext.getId());
+            req.setMemberId(order.getMemberId());
             req.setPassengerId(tickets.get(j).getPassengerId());
             req.setPassengerName(tickets.get(j).getPassengerName());
             req.setTrainDate(dailyTrainTicket.getDate());

@@ -10,7 +10,6 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
-import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lxq.train.business.domain.*;
@@ -23,7 +22,6 @@ import com.lxq.train.business.req.ConfirmOrderAcceptReq;
 import com.lxq.train.business.req.ConfirmOrderQueryReq;
 import com.lxq.train.business.req.ConfirmOrderTicketReq;
 import com.lxq.train.business.resp.ConfirmOrderQueryResp;
-import com.lxq.train.common.context.LoginMemberContext;
 import com.lxq.train.common.exception.BusinessException;
 import com.lxq.train.common.exception.BusinessExceptionEnum;
 import com.lxq.train.common.resp.PageResp;
@@ -105,16 +103,17 @@ public class ConfirmOrderService {
     @SentinelResource(value="doConfirm",blockHandler = "doConfirmBlock")
     public void doConfirm(ConfirmOrderAcceptReq req) {
         //校验令牌余量
-        int validSkToken = skTokenService.validSkToken(req.getDate(), req.getTrainCode(), LoginMemberContext.getId());
-        if(validSkToken > 0)
-            LOG.info("令牌校验通过");
-        else if(validSkToken == 0){
-            LOG.info("未通过令牌校验");
-            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_SK_TOKEN_ERROR);
-        }else{
-            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_SK_TOKEN_EXCEPTION);
-        }
-
+//        int validSkToken = skTokenService.validSkToken(req.getDate(), req.getTrainCode(), LoginMemberContext.getId());
+//        if(validSkToken > 0)
+//            LOG.info("令牌校验通过");
+//        else if(validSkToken == 0){
+//            LOG.info("未通过令牌校验");
+//            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_SK_TOKEN_ERROR);
+//        }else{
+//            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_SK_TOKEN_EXCEPTION);
+//        }
+//
+        // 获取分布式锁
         String key = RedisKeyEnum.CONFIRM_ORDER + "-" + DateUtil.formatDate(req.getDate()) + "-" + req.getTrainCode();
         Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(key, key, 2, TimeUnit.SECONDS);
         if(Boolean.TRUE.equals(setIfAbsent)){
@@ -149,28 +148,43 @@ public class ConfirmOrderService {
             // 省略业务数据校验，如车次是否存在，余票是否存在，车次是否在有效期内，tickets条数>0，同乘客同车次是否已经购买过
             // 做这个的目的是为了防止有人直接调用后端接口
 
-            // 保存数据确认订单表，状态初始化
         try {
+            // 保存数据确认订单表，状态初始化
             Date date = req.getDate();
             String trainCode = req.getTrainCode();
             String start = req.getStart();
             String end = req.getEnd();
             List<ConfirmOrderTicketReq> tickets = req.getTickets();
+//
+//            DateTime now = new DateTime();
+//            ConfirmOrder order = new ConfirmOrder();
+//            order.setId(SnowUtil.getSnowFlakeNextId());
+//            order.setMemberId(req.getMemberId());
+//            order.setDate(date);
+//            order.setTrainCode(trainCode);
+//            order.setStart(start);
+//            order.setEnd(end);
+//            order.setDailyTrainTicketId(req.getDailyTrainTicketId());
+//            order.setStatus(ConfirmOrderStatusEnum.INIT.getCode());
+//            order.setCreateTime(now);
+//            order.setUpdateTime(now);
+//            order.setTickets(JSON.toJSONString(tickets));
+//            confirmOrderMapper.insert(order);
 
-            DateTime now = new DateTime();
-            ConfirmOrder order = new ConfirmOrder();
-            order.setId(SnowUtil.getSnowFlakeNextId());
-            order.setMemberId(LoginMemberContext.getId());
-            order.setDate(date);
-            order.setTrainCode(trainCode);
-            order.setStart(start);
-            order.setEnd(end);
-            order.setDailyTrainTicketId(req.getDailyTrainTicketId());
-            order.setStatus(ConfirmOrderStatusEnum.INIT.getCode());
-            order.setCreateTime(now);
-            order.setUpdateTime(now);
-            order.setTickets(JSON.toJSONString(tickets));
-            confirmOrderMapper.insert(order);
+            // 从数据库中查出订单
+            ConfirmOrderExample confirmOrderExample = new ConfirmOrderExample();
+            confirmOrderExample.setOrderByClause("id desc");
+            ConfirmOrderExample.Criteria criteria = confirmOrderExample.createCriteria();
+            criteria.andDateEqualTo(date).andTrainCodeEqualTo(trainCode).andMemberIdEqualTo(req.getMemberId()).andStatusEqualTo(ConfirmOrderStatusEnum.INIT.getCode());
+            List<ConfirmOrder> confirmOrders = confirmOrderMapper.selectByExampleWithBLOBs( confirmOrderExample);
+            ConfirmOrder order;
+            if(CollUtil.isEmpty(confirmOrders)){
+                LOG.info("找不到原始订单，结束");
+                return;
+            }else{
+                LOG.info("本次处理{}条待确认订单", confirmOrders.size());
+                order = confirmOrders.get(0);
+            }
 
             // 查出余票记录，得到真实的余票信息
             DailyTrainTicket dailyTrainTicket = dailyTrainTicketService.selectByUnique(date, trainCode, start, end);

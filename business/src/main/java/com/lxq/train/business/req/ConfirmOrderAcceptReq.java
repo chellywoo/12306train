@@ -9,6 +9,8 @@ import java.util.List;
 
 public class ConfirmOrderAcceptReq {
 
+    private Long memberId;
+
     /**
      * 日期
      */
@@ -57,6 +59,14 @@ public class ConfirmOrderAcceptReq {
      */
     @NotBlank(message = "图形验证码参数非法")
     private String imageCodeToken;
+
+    public Long getMemberId() {
+        return memberId;
+    }
+
+    public void setMemberId(Long memberId) {
+        this.memberId = memberId;
+    }
 
     public Date getDate() {
         return date;
