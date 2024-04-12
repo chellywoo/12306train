@@ -33,3 +33,5 @@ build/
 .vscode/
 
 log/
+dump.rdb
+train.jmx
