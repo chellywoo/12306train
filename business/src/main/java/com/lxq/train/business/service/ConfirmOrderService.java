@@ -148,8 +148,6 @@ public class ConfirmOrderService {
 //                LOG.info("很遗憾没抢到锁，lockKey:{}", key);
 //                throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_ERROR);
 //            }
-            // 省略业务数据校验，如车次是否存在，余票是否存在，车次是否在有效期内，tickets条数>0，同乘客同车次是否已经购买过
-            // 做这个的目的是为了防止有人直接调用后端接口
 
             while(true){
                 // 取确认订单表的记录，同日期车次，状态时I的订单，分页处理，每次取N条
@@ -182,6 +180,18 @@ public class ConfirmOrderService {
         }
     }
 
+    /**
+     * 修改订单状态
+     * @param order
+     */
+    private void updateStatus(ConfirmOrder order){
+        ConfirmOrder update = new ConfirmOrder();
+        update.setId(order.getId());
+        update.setUpdateTime(new Date());
+        update.setStatus(order.getStatus());
+        confirmOrderMapper.updateByPrimaryKeySelective(update);
+    }
+
     private boolean sell(ConfirmOrder order) {
         ConfirmOrderAcceptReq req = new ConfirmOrderAcceptReq();
         req.setMemberId(order.getMemberId());
@@ -195,7 +205,12 @@ public class ConfirmOrderService {
         req.setImageCodeToken("");
         req.setLogId("");
 
+        // 省略业务数据校验，如车次是否存在，余票是否存在，车次是否在有效期内，tickets条数>0，同乘客同车次是否已经购买过
+        // 做这个的目的是为了防止有人直接调用后端接口
         // 保存数据确认订单表，状态初始化
+        LOG.info("将确认订单表中的状态更新为处理中，避免重复处理，confirm_order.id:{}", order.getId());
+        order.setStatus(ConfirmOrderStatusEnum.PENDING.getCode());
+        updateStatus(order);
         Date date = req.getDate();
         String trainCode = req.getTrainCode();
         String start = req.getStart();
