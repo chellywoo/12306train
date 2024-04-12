@@ -107,7 +107,7 @@ public class SkTokenService {
         long stationCount = dailyTrainStationService.countByTrainCode(date, trainCode);
         LOG.info("车次【{}】车站数为：{}", trainCode, stationCount);
 
-        int skCount = (int) (seatCount * stationCount * 3/4);
+        int skCount = (int) (seatCount * stationCount);
         LOG.info("车次【{}】初始生成令牌数为：{}", trainCode, skCount);
         skToken.setCount(skCount);
         skTokenMapper.insert(skToken);

@@ -125,7 +125,7 @@
 
   <!-- 第一层验证码 纯前端 -->
   <a-modal v-model:visible="firstImageCodeModalVisible" :title="null" :footer="null" :closable="false"
-           105 style="top: 50px; width: 400px">
+           style="top: 50px; width: 400px">
     <p style="text-align: center; font-weight: bold; font-size: 18px">使用纯前端验证码削弱瞬时高峰<br/>减少后端验证码接口压力
     </p>
     <p>
@@ -136,6 +136,12 @@
       </a-input>
     </p>
     <a-button type="danger" block @click="validFirstImageCode">提交验证码</a-button>
+  </a-modal>
+  <a-modal v-model:visible="lineModelVisible" :title="null" :footer="null" :closable="false"
+            style="top: 50px; width: 400px">
+    <div class="book-line">
+      <loding-outlined/> 系统正在处理中...
+    </div>
   </a-modal>
 </template>
 <script>
@@ -152,6 +158,7 @@ export default defineComponent({
     const seatTypes = [];
     const PASSENGER_TYPE = window.PASSENGER_TYPE;
     const visible = ref(false);
+    const lineModelVisible = ref();
 
     const dailyTrainTicket = SessionStorage.get(SESSION_ORDER) || {}; // 防止空指针异常
     console.log("下单的车次信息：", dailyTrainTicket);
@@ -342,9 +349,10 @@ export default defineComponent({
       }).then((response) => {
         let data = response.data;
         if (data.success) {
-          notification.success({description: "下单成功！"});
+          // notification.success({description: "下单成功！"});
           imageCodeModalVisible.value = false;
           visible.value = false;
+          lineModelVisible.value = true;
         } else {
           notification.error({description: data.message});
         }
@@ -427,7 +435,8 @@ export default defineComponent({
       firstImageCodeModalVisible,
       loadFirstImageCode,
       showFirstImageCodeModal,
-      validFirstImageCode
+      validFirstImageCode,
+      lineModelVisible
     };
   },
 });
