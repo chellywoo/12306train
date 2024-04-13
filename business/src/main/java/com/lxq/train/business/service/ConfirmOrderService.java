@@ -206,7 +206,13 @@ public class ConfirmOrderService {
         confirmOrderMapper.updateByPrimaryKeySelective(update);
     }
 
-    private boolean sell(ConfirmOrder order) {
+    private void sell(ConfirmOrder order) {
+        // 为演示效果，每次出票增加200ms延迟
+        try{
+            Thread.sleep(200);
+        }catch (InterruptedException e){
+            throw new RuntimeException(e);
+        }
         ConfirmOrderAcceptReq req = new ConfirmOrderAcceptReq();
         req.setMemberId(order.getMemberId());
         req.setDate(order.getDate());
@@ -327,7 +333,7 @@ public class ConfirmOrderService {
             LOG.error("保存购票信息失败", e);
             throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_EXCEPTION);
         }
-        return false;
+//        return false;
     }
 
     /**
