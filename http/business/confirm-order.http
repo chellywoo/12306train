@@ -19,3 +19,10 @@ Token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYmYiOjE3MTIyOTExNTEsIm1vYmlsZSI6
 
 
 ###
+
+GET http://localhost:8002/business/confirm-order/query-line-count/1778772971813474304
+Accept: application/json
+token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYmYiOjE3MTI5ODgyOTIsIm1vYmlsZSI6IjEzNzIwMjM5MDQxIiwiaWQiOjE3NjY2NjYzMzkzNjk0ODgzODQsImV4cCI6MTcxMzAyNDI5MiwiaWF0IjoxNzEyOTg4MjkyfQ.r08Kt3zsnWghfOUPyhuU4N7U5rjSJIaVnI2Yg39rFG4
+
+
+###

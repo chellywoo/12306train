@@ -15,15 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/confirm-order")
 public class ConfirmOrderController {
     private static final Logger LOG = LoggerFactory.getLogger(ConfirmOrderService.class);
+    @Resource
+    private ConfirmOrderService confirmOrderService;
     @Resource
     private BeforeConfirmOrderService beforeConfirmOrderService;
 
@@ -57,6 +56,12 @@ public class ConfirmOrderController {
 //        confirmOrderService.doConfirm(req);
         long id = beforeConfirmOrderService.beforeDoConfirm(req);
         return new CommonResp<>(String.valueOf(id));
+    }
+
+    @GetMapping("/query-line-count/{id}")
+    public CommonResp<Integer> queryLineCount(@PathVariable Long id){
+        Integer count = confirmOrderService.queryLineCount(id);
+        return new CommonResp<>(count);
     }
 
     /**
