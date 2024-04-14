@@ -31,8 +31,10 @@ import com.lxq.train.common.util.SnowUtil;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -102,8 +104,15 @@ public class ConfirmOrderService {
         confirmOrderMapper.deleteByPrimaryKey(id);
     }
 
+    /***
+     * 异步声明之后，会开启另一个线程来执行这个功能
+     * @param dto
+     */
+    @Async
     @SentinelResource(value="doConfirm",blockHandler = "doConfirmBlock")
     public void doConfirm(ConfirmRocketMQDto dto) {
+        MDC.put("LOG_ID", dto.getLogId());
+        LOG.info("异步出票开始:{}", dto);
         //校验令牌余量
 //        int validSkToken = skTokenService.validSkToken(req.getDate(), req.getTrainCode(), LoginMemberContext.getId());
 //        if(validSkToken > 0)

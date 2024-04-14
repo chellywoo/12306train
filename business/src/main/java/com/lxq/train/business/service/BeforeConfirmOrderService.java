@@ -7,7 +7,6 @@ import com.alibaba.fastjson.JSON;
 import com.lxq.train.business.domain.ConfirmOrder;
 import com.lxq.train.business.dto.ConfirmRocketMQDto;
 import com.lxq.train.business.enums.ConfirmOrderStatusEnum;
-import com.lxq.train.business.enums.RocketMQTopicEnum;
 import com.lxq.train.business.mapper.ConfirmOrderMapper;
 import com.lxq.train.business.req.ConfirmOrderAcceptReq;
 import com.lxq.train.business.req.ConfirmOrderTicketReq;
@@ -16,7 +15,6 @@ import com.lxq.train.common.exception.BusinessException;
 import com.lxq.train.common.exception.BusinessExceptionEnum;
 import com.lxq.train.common.util.SnowUtil;
 import jakarta.annotation.Resource;
-import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -32,6 +30,8 @@ public class BeforeConfirmOrderService {
     private static final Logger LOG = LoggerFactory.getLogger(BeforeConfirmOrderService.class);
 
     @Resource
+    private ConfirmOrderService confirmOrderService;
+    @Resource
     private ConfirmOrderMapper confirmOrderMapper;
     @Resource
     private SkTokenService skTokenService;
@@ -39,8 +39,8 @@ public class BeforeConfirmOrderService {
     @Autowired
     private StringRedisTemplate redisTemplate;
 
-    @Resource
-    private RocketMQTemplate rocketMQTemplate;
+//    @Resource
+//    private RocketMQTemplate rocketMQTemplate;
 
     @SentinelResource(value="beforeDoConfirm",blockHandler = "beforeDoConfirmBlock")
     public long beforeDoConfirm(ConfirmOrderAcceptReq req) {
@@ -85,9 +85,10 @@ public class BeforeConfirmOrderService {
         confirmRocketMQDto.setTrainCode(req.getTrainCode());
         confirmRocketMQDto.setLogId(MDC.get("LOG_ID"));
         String reqJson = JSON.toJSONString(confirmRocketMQDto);
-        LOG.info("排队购票，发送MQ消息，消息内容：{}", reqJson);
-        rocketMQTemplate.convertAndSend(RocketMQTopicEnum.CONFIRM_ORDER.getCode(),reqJson);
-        LOG.info("排队购票，发送MQ消息结束");
+//        LOG.info("排队购票，发送MQ消息，消息内容：{}", reqJson);
+//        rocketMQTemplate.convertAndSend(RocketMQTopicEnum.CONFIRM_ORDER.getCode(),reqJson);
+//        LOG.info("排队购票，发送MQ消息结束");
+        confirmOrderService.doConfirm(confirmRocketMQDto);
         return order.getId();
     }
 
