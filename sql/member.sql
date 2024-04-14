@@ -66,3 +66,6 @@ CREATE TABLE IF NOT EXISTS `undo_log`
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8mb4 COMMENT ='AT transaction mode undo table';
+
+
+DELETE FROM ticket WHERE ID<>1;

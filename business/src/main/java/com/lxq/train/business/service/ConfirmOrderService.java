@@ -117,7 +117,7 @@ public class ConfirmOrderService {
 //
         // 获取分布式锁
         String key = RedisKeyEnum.CONFIRM_ORDER + "-" + DateUtil.formatDate(dto.getDate()) + "-" + dto.getTrainCode();
-        Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(key, key, 2, TimeUnit.SECONDS);
+        Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(key, key, 60, TimeUnit.SECONDS);
         if(Boolean.TRUE.equals(setIfAbsent)){
             LOG.info("恭喜抢到锁了，lockKey:{}", key);
         }else{
@@ -208,11 +208,11 @@ public class ConfirmOrderService {
 
     private void sell(ConfirmOrder order) {
         // 为演示效果，每次出票增加200ms延迟
-        try{
-            Thread.sleep(200);
-        }catch (InterruptedException e){
-            throw new RuntimeException(e);
-        }
+//        try{
+//            Thread.sleep(200);
+//        }catch (InterruptedException e){
+//            throw new RuntimeException(e);
+//        }
         ConfirmOrderAcceptReq req = new ConfirmOrderAcceptReq();
         req.setMemberId(order.getMemberId());
         req.setDate(order.getDate());

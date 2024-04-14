@@ -216,3 +216,5 @@ create table `sk_token`(
     unique key `date_train_code_unique` (`date`, `train_code`)
 ) engine = innodb
   default charset = utf8mb4 comment ='秒杀令牌';
+
+DELETE FROM confirm_order WHERE ID<>1;
